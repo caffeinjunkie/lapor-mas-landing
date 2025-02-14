@@ -16,6 +16,7 @@
     "@heroui/listbox": "2.3.9",
     "@heroui/modal": "^2.2.8",
     "@heroui/navbar": "2.2.8",
+    "@heroui/spinner": "^2.2.7",
     "@heroui/switch": "2.2.8",
     "@heroui/system": "2.4.6",
     "@heroui/theme": "2.4.5",
