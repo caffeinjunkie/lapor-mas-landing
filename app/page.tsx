@@ -2,14 +2,14 @@
 
 import React from "react";
 import { button as buttonStyles } from "@heroui/theme";
-import { Camera } from "react-camera-pro";
+import { Camera, CameraType } from "react-camera-pro";
 
 import { title, subtitle } from "@/components/primitives";
 import { Button } from "@heroui/button";
 
 export default function Home() {
   const [numberOfCameras, setNumberOfCameras] = React.useState(0);
-  const cameraRef = React.useRef(null);
+  const cameraRef = React.useRef<CameraType>(null);
   const [devices, setDevices] = React.useState<MediaDeviceInfo[]>([]);
   const [image, setImage] = React.useState<string | null>(null);
   const [activeDeviceId, setActiveDeviceId] = React.useState<
