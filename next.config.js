@@ -1,16 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "lapormaswapres.id",
-        port: "",
-        pathname: "/**",
-        search: "",
-      },
-    ],
-  },
-};
+const nextConfig = {};
 
 module.exports = nextConfig;
