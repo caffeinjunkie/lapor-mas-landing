@@ -22,7 +22,7 @@ export const siteConfig = {
     },
     {
       label: "Youtube",
-      href: "https://www.youtube.com/@Setwapres"
+      href: "https://www.youtube.com/@Setwapres",
     },
     {
       label: "About",

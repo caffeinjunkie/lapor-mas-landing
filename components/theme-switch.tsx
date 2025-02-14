@@ -1,6 +1,6 @@
 "use client";
 
-import {FC, useEffect} from "react";
+import { FC, useEffect } from "react";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { SwitchProps, useSwitch } from "@heroui/switch";
 import { useTheme } from "next-themes";
@@ -18,14 +18,14 @@ export interface ThemeSwitchProps {
 export const ThemeSwitch: FC<ThemeSwitchProps> = ({
   className,
   classNames,
-  setCurrentTheme
+  setCurrentTheme,
 }) => {
   const { theme, setTheme } = useTheme();
   const isSSR = useIsSSR();
 
   useEffect(() => {
     changeTheme();
-  }, [])
+  }, []);
 
   const changeTheme = () => {
     if (theme === "light") {
@@ -33,9 +33,9 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
       setCurrentTheme("dark");
     } else {
       setTheme("light");
-      setCurrentTheme("light")
+      setCurrentTheme("light");
     }
-  }
+  };
 
   const onChange = () => {
     changeTheme();

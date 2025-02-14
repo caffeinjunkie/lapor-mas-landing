@@ -3,11 +3,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'lapormaswapres.id',
-        port: '',
-        pathname: '/**',
-        search: '',
+        protocol: "https",
+        hostname: "lapormaswapres.id",
+        port: "",
+        pathname: "/**",
+        search: "",
       },
     ],
   },

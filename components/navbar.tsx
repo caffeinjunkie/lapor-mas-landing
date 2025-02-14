@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import React from "react";
@@ -18,12 +18,7 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  FacebookIcon,
-  WapresIcon,
-  IGIcon,
-  YTIcon,
-} from "@/components/icons";
+import { FacebookIcon, WapresIcon, IGIcon, YTIcon } from "@/components/icons";
 
 export const Navbar = () => {
   // TODO: for further use
@@ -47,7 +42,7 @@ export const Navbar = () => {
   //     type="search"
   //   />
   // );
-  const [currentTheme, setCurrentTheme] = React.useState('dark');
+  const [currentTheme, setCurrentTheme] = React.useState("dark");
   const [navbarOpen, setNavbarOpen] = React.useState(false);
 
   return (
@@ -56,7 +51,15 @@ export const Navbar = () => {
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             {/*<Logo />*/}
-            {currentTheme === "light" && <Image color="#fff" src="https://lapormaswapres.id/assets/images/LaporMasWapres.webp" alt="logo" width={64} height={64} />}
+            {currentTheme === "light" && (
+              <Image
+                color="#fff"
+                src="https://lapormaswapres.id/assets/images/LaporMasWapres.webp"
+                alt="logo"
+                width={64}
+                height={64}
+              />
+            )}
             {/*<p className="font-bold text-inherit">ACME</p>*/}
           </NextLink>
         </NavbarBrand>
@@ -83,21 +86,27 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal aria-label="Facebook" href={siteConfig.links.facebook}>
+          <Link
+            isExternal
+            aria-label="Facebook"
+            href={siteConfig.links.facebook}
+          >
             <FacebookIcon className="text-default-500" />
           </Link>
           <Link isExternal aria-label="Youtube" href={siteConfig.links.youtube}>
             <YTIcon className="text-default-500" />
           </Link>
-          <Link isExternal aria-label="Instagram" href={siteConfig.links.instagram}>
+          <Link
+            isExternal
+            aria-label="Instagram"
+            href={siteConfig.links.instagram}
+          >
             <IGIcon className="text-default-500" />
           </Link>
           <Link isExternal aria-label="Website" href={siteConfig.links.website}>
             <WapresIcon className="text-default-500" />
           </Link>
-          <ThemeSwitch
-            setCurrentTheme={setCurrentTheme}
-          />
+          <ThemeSwitch setCurrentTheme={setCurrentTheme} />
         </NavbarItem>
       </NavbarContent>
 
@@ -120,8 +129,14 @@ export const Navbar = () => {
                     : "foreground"
                 }
                 href={item.href}
-                onPress={index === siteConfig.navMenuItems.length - 1 ? () => setNavbarOpen(false) : () => {}}
-                target={index === siteConfig.navMenuItems.length - 1 ? "" : "_blank"}
+                onPress={
+                  index === siteConfig.navMenuItems.length - 1
+                    ? () => setNavbarOpen(false)
+                    : () => {}
+                }
+                target={
+                  index === siteConfig.navMenuItems.length - 1 ? "" : "_blank"
+                }
                 rel="noopener noreferrer"
                 size="lg"
               >
