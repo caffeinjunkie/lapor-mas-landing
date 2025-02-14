@@ -19,8 +19,8 @@ import clsx from "clsx";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { FacebookIcon, WapresIcon, IGIcon, YTIcon } from "@/components/icons";
-import laporMasLight from "@/public/lapormas-light.png"
-import laporMasDark from "@/public/lapormas-dark.png"
+import laporMasLight from "@/public/lapormas-light.png";
+import laporMasDark from "@/public/lapormas-dark.png";
 
 export const Navbar = () => {
   // TODO: for further use
@@ -48,10 +48,19 @@ export const Navbar = () => {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
 
   return (
-    <HeroUINavbar isMenuOpen={navbarOpen} onMenuOpenChange={() => setNavbarOpen(!navbarOpen)} maxWidth="xl" position="sticky">
+    <HeroUINavbar
+      isMenuOpen={navbarOpen}
+      onMenuOpenChange={() => setNavbarOpen(!navbarOpen)}
+      maxWidth="xl"
+      position="sticky"
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" onClick={() => setNavbarOpen(false)} href="/">
+          <NextLink
+            className="flex justify-start items-center gap-1"
+            onClick={() => setNavbarOpen(false)}
+            href="/"
+          >
             {/*<Logo />*/}
             <Image
               color="#fff"
