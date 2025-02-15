@@ -23,18 +23,23 @@ import { DatePicker } from "@heroui/date-picker";
 import { getLocalTimeZone, now } from "@internationalized/date";
 import { Select, SelectItem } from "@heroui/select";
 import { categories } from "@/config/complaint-category";
+import { findAddress } from "@/helper/google-maps";
 
 export default function Home() {
   const cameraRef = React.useRef<CameraType>(null);
   const [image, setImage] = React.useState<string | null>(null);
   const [deviceReady, setDeviceReady] = React.useState(false);
-  // const [coordinates, setCoordinates] = React.useState<string | null>(null);
-  const [isCoordinatesLoaded, setIsCoordinatesLoaded] =
-    React.useState<boolean>(true);
   const [complaintCategory, setComplaintCategory] = React.useState<string>("");
   const [isStep2, setIsStep2] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [shortAddress, setShortAddress] = React.useState<string | null>(null);
+  const [isAddressLoaded, setIsAddressLoaded] = React.useState<boolean>(true);
 
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
+
+  React.useEffect(() => {
+    refreshLocation();
+  }, []);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -45,42 +50,32 @@ export default function Home() {
     }
   }, [isOpen]);
 
-  const [coordinates, setCoordinates] = React.useState<{
-    latitude: number | null;
-    longitude: number | null;
-  }>({
-    latitude: null,
-    longitude: null,
-  });
-
   const refreshLocation = () => {
-    setIsCoordinatesLoaded(false);
-    setTimeout(() => {
-      setIsCoordinatesLoaded(true);
-    }, 1000);
-  };
-
-  const [error, setError] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    // Check if geolocation is available in the browser
+    setIsAddressLoaded(false);
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCoordinates({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-          console.log(position, "pos");
+        async ({ coords: { latitude, longitude } }) => {
+          try {
+            const address = await findAddress(latitude, longitude);
+            if (address?.adminArea3) {
+              setShortAddress(address.adminArea3);
+            }
+          } catch (err: any) {
+            setError(err.message);
+          } finally {
+            setIsAddressLoaded(true);
+          }
         },
         (err) => {
-          setError(`Error: ${err.message}`);
+          setError(`Gagal memuat lokasi: ${err.message}`);
+          setIsAddressLoaded(true);
         },
       );
     } else {
-      setError("Geolocation is not supported by this browser.");
+      setError("GPS tidak terdeteksi.");
+      setIsAddressLoaded(true);
     }
-  }, []);
+  };
 
   const takePhoto = () => {
     if (cameraRef.current) {
@@ -102,14 +97,21 @@ export default function Home() {
 
   return (
     <section className="flex flex-col items-center pt-2">
-      <Skeleton className="rounded-lg" isLoaded={isCoordinatesLoaded}>
+      <Skeleton
+        className="rounded-lg"
+        isLoaded={isAddressLoaded && (shortAddress !== null || error !== null)}
+      >
         <Button
-          color={coordinates ? "default" : "warning"}
-          startContent={coordinates ? <MapIcon /> : <RefreshIcon />}
+          color={shortAddress ? "default" : "warning"}
+          startContent={shortAddress ? <MapIcon /> : <RefreshIcon />}
           variant="light"
           onPress={refreshLocation}
         >
-          {coordinates ? "Sukolilo" : "Mual ulang lokasi"}
+          {shortAddress
+            ? `${shortAddress}`
+            : error
+              ? `${error}`
+              : "Mual ulang lokasi"}
         </Button>
       </Skeleton>
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
@@ -244,7 +246,7 @@ export default function Home() {
           </Modal>
           <div className="w-full fixed flex justify-center bottom-[36] left-0">
             <Button
-              color="danger"
+              color="primary"
               radius="full"
               variant="shadow"
               onPress={onOpen}
