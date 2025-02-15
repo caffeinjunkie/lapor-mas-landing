@@ -13,18 +13,14 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 
-import { CameraIcon, FileIcon, MapIcon, RefreshIcon } from "@/components/icons";
+import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
 import Menu from "@/components/menu";
-import CaseList from "@/components/case-list";
-import { Form } from "@heroui/form";
-import { Input, Textarea } from "@heroui/input";
-import { DatePicker } from "@heroui/date-picker";
-import { getLocalTimeZone, now } from "@internationalized/date";
-import { Select, SelectItem } from "@heroui/select";
-import { categories, Category } from "@/config/complaint-category";
-import { findAddress } from "@/helper/google-maps";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
+import { ReportList, Item, Empty } from "@/components/report-list";
+import { Category } from "@/config/complaint-category";
+import { Address, findAddress } from "@/utils/google-maps";
+import { ComplaintForm } from "@/components/complaint-form";
+import { getFromSessionStorage, SessionData } from "@/utils/session-storage";
 
 export default function Home() {
   const cameraRef = React.useRef<CameraType>(null);
@@ -34,15 +30,17 @@ export default function Home() {
     React.useState<Category | null>(null);
   const [isStep2, setIsStep2] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [shortAddress, setShortAddress] = React.useState<string | null>(null);
+  const [address, setAddress] = React.useState<Address | null>(null);
   const [isAddressLoaded, setIsAddressLoaded] = React.useState<boolean>(true);
   const [isCategoryLocked, setIsCategoryLocked] =
     React.useState<boolean>(false);
+  const [publicReports, setPublicReports] = React.useState<SessionData[]>([]);
 
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
 
   React.useEffect(() => {
     refreshLocation();
+    handleGetData();
   }, []);
 
   React.useEffect(() => {
@@ -62,8 +60,8 @@ export default function Home() {
         async ({ coords: { latitude, longitude } }) => {
           try {
             const address = await findAddress(latitude, longitude);
-            if (address?.adminArea3) {
-              setShortAddress(address.adminArea3);
+            if (address) {
+              setAddress(address);
             }
           } catch (err: any) {
             setError(err.message);
@@ -80,6 +78,11 @@ export default function Home() {
       setError("GPS tidak terdeteksi.");
       setIsAddressLoaded(true);
     }
+  };
+
+  const handleGetData = () => {
+    const storedData = getFromSessionStorage();
+    setPublicReports(storedData);
   };
 
   const takePhoto = () => {
@@ -101,81 +104,20 @@ export default function Home() {
     setIsCategoryLocked(true);
   };
 
-  const animals = [
-    {
-      label: "Cat",
-      key: "cat",
-      description: "The second most popular pet in the world",
-    },
-    {
-      label: "Dog",
-      key: "dog",
-      description: "The most popular pet in the world",
-    },
-    {
-      label: "Elephant",
-      key: "elephant",
-      description: "The largest land animal",
-    },
-    { label: "Lion", key: "lion", description: "The king of the jungle" },
-    { label: "Tiger", key: "tiger", description: "The largest cat species" },
-    {
-      label: "Giraffe",
-      key: "giraffe",
-      description: "The tallest land animal",
-    },
-    {
-      label: "Dolphin",
-      key: "dolphin",
-      description: "A widely distributed and diverse group of aquatic mammals",
-    },
-    {
-      label: "Penguin",
-      key: "penguin",
-      description: "A group of aquatic flightless birds",
-    },
-    {
-      label: "Zebra",
-      key: "zebra",
-      description: "A several species of African equids",
-    },
-    {
-      label: "Shark",
-      key: "shark",
-      description:
-        "A group of elasmobranch fish characterized by a cartilaginous skeleton",
-    },
-    {
-      label: "Whale",
-      key: "whale",
-      description: "Diverse group of fully aquatic placental marine mammals",
-    },
-    {
-      label: "Otter",
-      key: "otter",
-      description: "A carnivorous mammal in the subfamily Lutrinae",
-    },
-    {
-      label: "Crocodile",
-      key: "crocodile",
-      description: "A large semiaquatic reptile",
-    },
-  ];
-
   return (
     <section className="flex flex-col items-center pt-2">
       <Skeleton
         className="rounded-lg"
-        isLoaded={isAddressLoaded && (shortAddress !== null || error !== null)}
+        isLoaded={isAddressLoaded && (address !== null || error !== null)}
       >
         <Button
-          color={shortAddress ? "default" : "warning"}
-          startContent={shortAddress ? <MapIcon /> : <RefreshIcon />}
+          color={address ? "default" : "warning"}
+          startContent={address ? <MapIcon /> : <RefreshIcon />}
           variant="light"
           onPress={refreshLocation}
         >
-          {shortAddress
-            ? `${shortAddress}`
+          {address
+            ? `${address.adminArea3}`
             : error
               ? `${error}`
               : "Mual ulang lokasi"}
@@ -183,7 +125,21 @@ export default function Home() {
       </Skeleton>
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
-        <CaseList></CaseList>
+        <ReportList>
+          {publicReports.length === 0 && <ReportList.Empty />}
+          {publicReports &&
+            publicReports.map(
+              ({ title, category, date }: SessionData, index: number) => (
+                <ReportList.Item
+                  key={index}
+                  title={title}
+                  category={category}
+                  date={date}
+                  isLast={index === publicReports.length - 1}
+                />
+              ),
+            )}
+        </ReportList>
         <div className="flex gap-3">
           <Modal
             isOpen={isOpen}
@@ -206,90 +162,14 @@ export default function Home() {
                       />
                     )}
                     {isStep2 && (
-                      <div className="flex flex-col gap-6">
-                        <Form
-                          className="w-full max-w-xl flex flex-col gap-4"
-                          validationBehavior="native"
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            onClose();
-                          }}
-                        >
-                          <Input
-                            isRequired
-                            errorMessage="Mohon masukkan judul laporan."
-                            label="Judul"
-                            name="title"
-                            placeholder="Tulis judul laporan"
-                            type="text"
-                          />
-                          <Textarea
-                            label="Deskripsi"
-                            placeholder="Tulis deskripsi laporan"
-                          />
-                          <Select
-                            isRequired
-                            isDisabled={isCategoryLocked}
-                            defaultSelectedKeys={[
-                              complaintCategory?.label || "",
-                            ]}
-                            label="Kategori Laporan"
-                            onChange={(event) => {
-                              setComplaintCategory({
-                                label: event.target.value,
-                                addressRequired: categories.filter(
-                                  ({ label }) => label === event.target.value,
-                                )[0].addressRequired,
-                              });
-                            }}
-                            placeholder="Pilih kategori laporan"
-                          >
-                            {Object.entries(categories).map((category) => (
-                              <SelectItem key={category[1].label}>
-                                {category[1].label}
-                              </SelectItem>
-                            ))}
-                          </Select>
-                          {complaintCategory?.addressRequired && (
-                            <Autocomplete
-                              isRequired
-                              defaultItems={animals}
-                              label="Alamat Kejadian"
-                              placeholder="Search an animal"
-                            >
-                              {(animal) => (
-                                <AutocompleteItem key={animal.key}>
-                                  {animal.label}
-                                </AutocompleteItem>
-                              )}
-                            </Autocomplete>
-                          )}
-                          <DatePicker
-                            isReadOnly
-                            isDisabled
-                            label="Birth date"
-                            value={now(getLocalTimeZone())}
-                          />
-                          <div className="flex flex-row py-4 items-center justify-center gap-1">
-                            <FileIcon />
-                            <p className="text-small font-medium">
-                              File terlampir
-                            </p>
-                          </div>
-                          <div className="flex w-full justify-between pb-2">
-                            <Button
-                              onPress={onClose}
-                              color="danger"
-                              variant="light"
-                            >
-                              Batal
-                            </Button>
-                            <Button color="primary" type="submit">
-                              Simpan
-                            </Button>
-                          </div>
-                        </Form>
-                      </div>
+                      <ComplaintForm
+                        category={complaintCategory}
+                        isCategorySelectionLocked={isCategoryLocked}
+                        setCategory={setComplaintCategory}
+                        address={address}
+                        onClose={onClose}
+                        handleGetData={handleGetData}
+                      />
                     )}
                   </ModalBody>
                   {!isStep2 && (

@@ -6,7 +6,7 @@ interface AddressComponentProps {
   types: string[];
 }
 
-type FindAddressReturnProps = {
+export type Address = {
   adminArea3?: string;
   formattedAddress?: string;
 };
@@ -14,7 +14,7 @@ type FindAddressReturnProps = {
 export const findAddress = async (
   lat: number,
   lng: number,
-): Promise<FindAddressReturnProps> => {
+): Promise<Address> => {
   try {
     const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY;
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleApiKey}`;
