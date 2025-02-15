@@ -1,7 +1,7 @@
 import {
   BillIcon,
   BuildingIcon,
-  BusStopIcon,
+  PublicFacilityIcon,
   CoinIcon,
   ConeIcon,
   FoodIcon,
@@ -12,7 +12,7 @@ import {
 export const category = [
   { Icon: BillIcon, label: "Kebijakan Publik" },
   { Icon: ConeIcon, label: "Kondisi Jalan" },
-  { Icon: BusStopIcon, label: "Fasilitas Umum" },
+  { Icon: PublicFacilityIcon, label: "Fasilitas Umum" },
   { Icon: FoodIcon, label: "Makan Bergizi" },
   { Icon: BuildingIcon, label: "Program Pemerintah" },
   { Icon: SecurityIcon, label: "Keamanan" },

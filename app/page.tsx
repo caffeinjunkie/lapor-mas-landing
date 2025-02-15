@@ -2,7 +2,6 @@
 
 import React from "react";
 import { CameraType } from "react-camera-pro";
-import { button as buttonStyles } from "@heroui/theme";
 import { Button } from "@heroui/button";
 import { Skeleton } from "@heroui/skeleton";
 import {
@@ -17,6 +16,7 @@ import {
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
 import Menu from "@/components/menu";
+import CaseList from "@/components/case-list";
 
 export default function Home() {
   const cameraRef = React.useRef<CameraType>(null);
@@ -37,13 +37,11 @@ export default function Home() {
   }, [isOpen]);
 
   const refreshLocation = () => {
-    if (!coordinates) {
-      setIsCoordinatesLoaded(false);
-      setTimeout(() => {
-        setCoordinates("abcd");
-        setIsCoordinatesLoaded(true);
-      }, 1000);
-    }
+    setIsCoordinatesLoaded(false);
+    setTimeout(() => {
+      setCoordinates("abcd");
+      setIsCoordinatesLoaded(true);
+    }, 1000);
   };
 
   const takePhoto = () => {
@@ -65,10 +63,10 @@ export default function Home() {
   };
 
   return (
-    <section className="flex flex-col items-center py-2">
+    <section className="flex flex-col items-center pt-2">
       <Skeleton className="rounded-lg" isLoaded={isCoordinatesLoaded}>
         <Button
-          color="default"
+          color={coordinates ? "default" : "warning"}
           startContent={coordinates ? <MapIcon /> : <RefreshIcon />}
           variant="light"
           onPress={refreshLocation}
@@ -76,15 +74,16 @@ export default function Home() {
           {coordinates ? "Sukolilo" : "Mual ulang lokasi"}
         </Button>
       </Skeleton>
-      <div className="flex flex-col items-center justify-center gap-4 py-2 md:py-10">
+      <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
+        <CaseList></CaseList>
         <div className="flex gap-3">
           <Modal
             isOpen={isOpen}
             placement="bottom-center"
             onOpenChange={onOpenChange}
           >
-            <ModalContent>
+            <ModalContent className="transform transition-transform duration-200">
               {(onClose) => (
                 <>
                   <ModalHeader className="flex flex-col items-center gap-1">
@@ -131,7 +130,7 @@ export default function Home() {
               )}
             </ModalContent>
           </Modal>
-          <div className="w-full absolute flex justify-center bottom-[36] left-0">
+          <div className="w-full fixed flex justify-center bottom-[36] left-0">
             <Button
               color="danger"
               radius="full"

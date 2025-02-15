@@ -7,7 +7,7 @@ type MenuProps = {
 };
 
 const Menu = ({ onMenuPress }: MenuProps) => (
-  <div className="px-4 py-6">
+  <div className="py-6">
     <div className="grid grid-cols-4 gap-4 md:grid-cols-8">
       {category.map(({ Icon, label }, index) => (
         <button
@@ -20,7 +20,7 @@ const Menu = ({ onMenuPress }: MenuProps) => (
         >
           <div
             className="flex flex-col items-center
-              justify-center bg-gray-400/20 rounded-lg
+              justify-center bg-gray-400/20 rounded-lg md:rounded-2xl
               w-12 h-12 md:w-16 md:h-16
               transform transition-transform duration-200 group-hover:bg-gray-400/30"
           >
