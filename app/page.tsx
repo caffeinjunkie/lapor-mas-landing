@@ -14,18 +14,20 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 
-import { title, subtitle } from "@/components/primitives";
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
+import Menu from "@/components/menu";
 
 export default function Home() {
   const cameraRef = React.useRef<CameraType>(null);
   const [image, setImage] = React.useState<string | null>(null);
   const [deviceReady, setDeviceReady] = React.useState(false);
-  const { isOpen, onOpenChange, onOpen } = useDisclosure();
   const [coordinates, setCoordinates] = React.useState<string | null>(null);
   const [isCoordinatesLoaded, setIsCoordinatesLoaded] =
     React.useState<boolean>(true);
+  const [complaintCategory, setComplaintCategory] = React.useState<string>("");
+
+  const { isOpen, onOpenChange, onOpen } = useDisclosure();
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -56,6 +58,12 @@ export default function Home() {
     setImage(null);
   };
 
+  const selectMenu = (menuLabel: string) => {
+    setComplaintCategory(menuLabel);
+    console.log(menuLabel);
+    onOpen();
+  };
+
   return (
     <section className="flex flex-col items-center py-2">
       <Skeleton className="rounded-lg" isLoaded={isCoordinatesLoaded}>
@@ -68,19 +76,8 @@ export default function Home() {
           {coordinates ? "Sukolilo" : "Mual ulang lokasi"}
         </Button>
       </Skeleton>
-      <div className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-        <div className="inline-block max-w-xl text-center justify-center">
-          <span className={title()}>Make&nbsp;</span>
-          <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
-          <br />
-          <span className={title()}>
-            websites regardless of your design experience.
-          </span>
-          <div className={subtitle({ class: "mt-4" })}>
-            Beautiful, fast and modern React UI library.
-          </div>
-        </div>
-
+      <div className="flex flex-col items-center justify-center gap-4 py-2 md:py-10">
+        <Menu onMenuPress={selectMenu} />
         <div className="flex gap-3">
           <Modal
             isOpen={isOpen}
@@ -134,16 +131,17 @@ export default function Home() {
               )}
             </ModalContent>
           </Modal>
-          <Button
-            className={buttonStyles({
-              color: "primary",
-              radius: "full",
-              variant: "shadow",
-            })}
-            onPress={onOpen}
-          >
-            Lapor Sekarang!
-          </Button>
+          <div className="w-full absolute flex justify-center bottom-[36] left-0">
+            <Button
+              color="danger"
+              radius="full"
+              variant="shadow"
+              onPress={onOpen}
+              startContent={<CameraIcon />}
+            >
+              Lapor Sekarang!
+            </Button>
+          </div>
         </div>
       </div>
     </section>
