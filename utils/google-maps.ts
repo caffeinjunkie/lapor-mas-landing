@@ -16,7 +16,7 @@ export const findAddress = async (
   lng: number,
 ): Promise<Address> => {
   try {
-    const googleApiKey = process.env.GOOGLE_MAP_API_KEY;
+    const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY;
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleApiKey}`;
 
     const response = await axios.get(url);
