@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { Camera, CameraType } from "react-camera-pro";
+import { CameraType } from "react-camera-pro";
 import { button as buttonStyles } from "@heroui/theme";
-import { Spinner } from "@heroui/spinner";
 import { Button } from "@heroui/button";
 import {
   Modal,
@@ -15,26 +14,14 @@ import {
 } from "@heroui/modal";
 
 import { title, subtitle } from "@/components/primitives";
-import { CameraIcon } from "@/components/icons";
+import { CameraIcon, RefreshIcon } from "@/components/icons";
+import { Camera } from "@/components/camera";
 
 export default function Home() {
   const cameraRef = React.useRef<CameraType>(null);
-  const [devices, setDevices] = React.useState<MediaDeviceInfo[]>([]);
   const [image, setImage] = React.useState<string | null>(null);
-  const [activeDeviceId, setActiveDeviceId] = React.useState<
-    string | undefined
-  >(undefined);
   const [deviceReady, setDeviceReady] = React.useState(false);
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
-
-  React.useEffect(() => {
-    (async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter((i) => i.kind == "videoinput");
-
-      setDevices(videoDevices);
-    })();
-  });
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -82,35 +69,12 @@ export default function Home() {
                   Foto Barang Bukti!
                 </ModalHeader>
                 <ModalBody className="gap-4">
-                  <div className="h-96 rounded-lg flex flex-col items-center justify-center overflow-hidden">
-                    {image && (
-                      <img
-                        alt="hasil"
-                        className="bg-no-repeat bg-contain bg-center"
-                        src={image as string}
-                      />
-                    )}
-                    {!deviceReady && <Spinner />}
-                    {!image && (
-                      <Camera
-                        ref={cameraRef}
-                        aspectRatio="cover"
-                        errorMessages={{
-                          noCameraAccessible: "Kamera tidak dapat diakses.",
-                          permissionDenied:
-                            "Mohon muat ulang dan beri izin menggunakan kamera.",
-                          switchCamera: "Tidak dapat mengganti kamera.",
-                          canvas: "Error.",
-                        }}
-                        facingMode="environment"
-                        videoReadyCallback={() => {
-                          console.log("Video devices ready.", devices);
-                          setDeviceReady(true);
-                        }}
-                        videoSourceDeviceId={activeDeviceId}
-                      />
-                    )}
-                  </div>
+                  <Camera
+                    ref={cameraRef}
+                    image={image}
+                    deviceReady={deviceReady}
+                    setDeviceReady={setDeviceReady}
+                  />
                 </ModalBody>
                 <ModalFooter className="flex flex-row items-center justify-between">
                   <Button color="danger" variant="light" onPress={onClose}>
@@ -131,6 +95,7 @@ export default function Home() {
                     <Button
                       color="default"
                       variant="light"
+                      startContent={<RefreshIcon />}
                       onPress={retakePhoto}
                     >
                       Ulangi
