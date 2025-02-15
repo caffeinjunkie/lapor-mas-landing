@@ -86,7 +86,7 @@ export const ComplaintForm = ({
         name="address"
         placeholder="Tulis alamat kejadian"
         type="text"
-        value={address?.formattedAddress ?? ""}
+        defaultValue={address?.formattedAddress ?? ""}
       />
     )}
     <div className="flex flex-row py-4 items-center justify-center gap-1 w-full">
