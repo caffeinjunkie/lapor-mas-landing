@@ -9,7 +9,7 @@ import {
   SecurityIcon,
 } from "@/components/icons";
 
-export const category = [
+export const categories = [
   { Icon: BillIcon, label: "Kebijakan Publik" },
   { Icon: ConeIcon, label: "Kondisi Jalan" },
   { Icon: PublicFacilityIcon, label: "Fasilitas Umum" },
