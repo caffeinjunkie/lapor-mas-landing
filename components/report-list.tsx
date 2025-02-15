@@ -31,19 +31,19 @@ export const Item = ({ title, category, date, isLast }: ItemProps) => {
     <div
       className={`flex items-center gap-3 w-full p-4 ${!isLast ? "border-b-2 border-gray-500/20" : ""}`}
     >
-      <div className="w-20 h-20 bg-gray-400/20 rounded-md overflow-hidden flex items-center justify-center">
+      <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-400/20 rounded-md overflow-hidden flex items-center justify-center">
         <Icon size={48} />
       </div>
       <div className="flex flex-1 flex-col w-24 overflow-hidden">
-        <p className="text-xs">{category}</p>
+        <p className="text-[10px] md:text-xs">{category}</p>
         <p
-          className="text-large font-semibold pt-1 pb-3
+          className="text-sm md:text-large font-semibold pt-1 pb-2.5 md:pb-3
           whitespace-nowrap overflow-hidden text-ellipsis"
         >
           {title}
         </p>
         <div className="flex flex-row justify-end items-center w-full">
-          <p className="text-xs font-light">{date}</p>
+          <p className="text-[10px] md:text-sm font-light">{date}</p>
         </div>
       </div>
     </div>
