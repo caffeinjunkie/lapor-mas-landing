@@ -26,17 +26,15 @@ export const ReportList = ({ children }: BottomSheetProps) => {
 
 export const Item = ({ title, category, date, isLast }: ItemProps) => {
   const Icon = categories.filter(({ label }) => label === category)[0].Icon;
+
   return (
     <div
       className={`flex items-center gap-3 w-full p-4 ${!isLast ? "border-b-2 border-gray-500/20" : ""}`}
     >
-      <div
-        id="image"
-        className="w-20 h-20 bg-gray-400/20 rounded-md overflow-hidden flex items-center justify-center"
-      >
+      <div className="w-20 h-20 bg-gray-400/20 rounded-md overflow-hidden flex items-center justify-center">
         <Icon size={48} />
       </div>
-      <div id="content" className="flex flex-1 flex-col w-24 overflow-hidden">
+      <div className="flex flex-1 flex-col w-24 overflow-hidden">
         <p className="text-xs">{category}</p>
         <p
           className="text-large font-semibold pt-1 pb-3

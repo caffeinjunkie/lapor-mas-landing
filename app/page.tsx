@@ -16,7 +16,7 @@ import {
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
 import Menu from "@/components/menu";
-import { ReportList, Item, Empty } from "@/components/report-list";
+import { ReportList } from "@/components/report-list";
 import { Category } from "@/config/complaint-category";
 import { Address, findAddress } from "@/utils/google-maps";
 import { ComplaintForm } from "@/components/complaint-form";
@@ -60,6 +60,7 @@ export default function Home() {
         async ({ coords: { latitude, longitude } }) => {
           try {
             const address = await findAddress(latitude, longitude);
+
             if (address) {
               setAddress(address);
             }
@@ -82,6 +83,7 @@ export default function Home() {
 
   const handleGetData = () => {
     const storedData = getFromSessionStorage();
+
     setPublicReports(storedData);
   };
 
@@ -132,10 +134,10 @@ export default function Home() {
               ({ title, category, date }: SessionData, index: number) => (
                 <ReportList.Item
                   key={index}
-                  title={title}
                   category={category}
                   date={date}
                   isLast={index === publicReports.length - 1}
+                  title={title}
                 />
               ),
             )}
@@ -163,12 +165,12 @@ export default function Home() {
                     )}
                     {isStep2 && (
                       <ComplaintForm
+                        address={address}
                         category={complaintCategory}
+                        handleGetData={handleGetData}
                         isCategorySelectionLocked={isCategoryLocked}
                         setCategory={setComplaintCategory}
-                        address={address}
                         onClose={onClose}
-                        handleGetData={handleGetData}
                       />
                     )}
                   </ModalBody>
@@ -202,9 +204,9 @@ export default function Home() {
                         <Button
                           color="primary"
                           isDisabled={!image}
+                          type="submit"
                           variant="light"
                           onPress={() => setIsStep2(true)}
-                          type="submit"
                         >
                           Lanjut
                         </Button>
@@ -219,9 +221,9 @@ export default function Home() {
             <Button
               color="primary"
               radius="full"
+              startContent={<CameraIcon />}
               variant="shadow"
               onPress={onOpen}
-              startContent={<CameraIcon />}
             >
               Lapor Sekarang!
             </Button>
