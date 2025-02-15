@@ -22,18 +22,22 @@ import { Input, Textarea } from "@heroui/input";
 import { DatePicker } from "@heroui/date-picker";
 import { getLocalTimeZone, now } from "@internationalized/date";
 import { Select, SelectItem } from "@heroui/select";
-import { categories } from "@/config/complaint-category";
+import { categories, Category } from "@/config/complaint-category";
 import { findAddress } from "@/helper/google-maps";
+import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 
 export default function Home() {
   const cameraRef = React.useRef<CameraType>(null);
   const [image, setImage] = React.useState<string | null>(null);
   const [deviceReady, setDeviceReady] = React.useState(false);
-  const [complaintCategory, setComplaintCategory] = React.useState<string>("");
+  const [complaintCategory, setComplaintCategory] =
+    React.useState<Category | null>(null);
   const [isStep2, setIsStep2] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
   const [shortAddress, setShortAddress] = React.useState<string | null>(null);
   const [isAddressLoaded, setIsAddressLoaded] = React.useState<boolean>(true);
+  const [isCategoryLocked, setIsCategoryLocked] =
+    React.useState<boolean>(false);
 
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
 
@@ -46,7 +50,8 @@ export default function Home() {
       setImage(null);
       setDeviceReady(false);
       setIsStep2(false);
-      setComplaintCategory("");
+      setComplaintCategory(null);
+      setIsCategoryLocked(false);
     }
   }, [isOpen]);
 
@@ -90,10 +95,72 @@ export default function Home() {
     setIsStep2(false);
   };
 
-  const selectMenu = (menuLabel: string) => {
-    setComplaintCategory(menuLabel);
+  const selectMenu = (category: Category) => {
+    setComplaintCategory(category);
     onOpen();
+    setIsCategoryLocked(true);
   };
+
+  const animals = [
+    {
+      label: "Cat",
+      key: "cat",
+      description: "The second most popular pet in the world",
+    },
+    {
+      label: "Dog",
+      key: "dog",
+      description: "The most popular pet in the world",
+    },
+    {
+      label: "Elephant",
+      key: "elephant",
+      description: "The largest land animal",
+    },
+    { label: "Lion", key: "lion", description: "The king of the jungle" },
+    { label: "Tiger", key: "tiger", description: "The largest cat species" },
+    {
+      label: "Giraffe",
+      key: "giraffe",
+      description: "The tallest land animal",
+    },
+    {
+      label: "Dolphin",
+      key: "dolphin",
+      description: "A widely distributed and diverse group of aquatic mammals",
+    },
+    {
+      label: "Penguin",
+      key: "penguin",
+      description: "A group of aquatic flightless birds",
+    },
+    {
+      label: "Zebra",
+      key: "zebra",
+      description: "A several species of African equids",
+    },
+    {
+      label: "Shark",
+      key: "shark",
+      description:
+        "A group of elasmobranch fish characterized by a cartilaginous skeleton",
+    },
+    {
+      label: "Whale",
+      key: "whale",
+      description: "Diverse group of fully aquatic placental marine mammals",
+    },
+    {
+      label: "Otter",
+      key: "otter",
+      description: "A carnivorous mammal in the subfamily Lutrinae",
+    },
+    {
+      label: "Crocodile",
+      key: "crocodile",
+      description: "A large semiaquatic reptile",
+    },
+  ];
 
   return (
     <section className="flex flex-col items-center pt-2">
@@ -162,9 +229,19 @@ export default function Home() {
                           />
                           <Select
                             isRequired
-                            isDisabled={complaintCategory !== ""}
-                            defaultSelectedKeys={[complaintCategory]}
+                            isDisabled={isCategoryLocked}
+                            defaultSelectedKeys={[
+                              complaintCategory?.label || "",
+                            ]}
                             label="Kategori Laporan"
+                            onChange={(event) => {
+                              setComplaintCategory({
+                                label: event.target.value,
+                                addressRequired: categories.filter(
+                                  ({ label }) => label === event.target.value,
+                                )[0].addressRequired,
+                              });
+                            }}
                             placeholder="Pilih kategori laporan"
                           >
                             {Object.entries(categories).map((category) => (
@@ -173,6 +250,20 @@ export default function Home() {
                               </SelectItem>
                             ))}
                           </Select>
+                          {complaintCategory?.addressRequired && (
+                            <Autocomplete
+                              isRequired
+                              defaultItems={animals}
+                              label="Alamat Kejadian"
+                              placeholder="Search an animal"
+                            >
+                              {(animal) => (
+                                <AutocompleteItem key={animal.key}>
+                                  {animal.label}
+                                </AutocompleteItem>
+                              )}
+                            </Autocomplete>
+                          )}
                           <DatePicker
                             isReadOnly
                             isDisabled

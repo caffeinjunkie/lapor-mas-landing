@@ -3,16 +3,16 @@ import React from "react";
 import { categories } from "@/config/complaint-category";
 
 type MenuProps = {
-  onMenuPress: (category: string) => void;
+  onMenuPress: (category: { label: string; addressRequired: boolean }) => void;
 };
 
 const Menu = ({ onMenuPress }: MenuProps) => (
   <div className="py-6">
     <div className="grid grid-cols-4 gap-4 md:grid-cols-8">
-      {categories.map(({ Icon, label }, index) => (
+      {categories.map(({ Icon, ...category }, index) => (
         <button
           key={index}
-          onClick={() => onMenuPress(label)}
+          onClick={() => onMenuPress(category)}
           className="group flex flex-col
             items-center gap-4
             overflow-hidden
@@ -27,7 +27,7 @@ const Menu = ({ onMenuPress }: MenuProps) => (
             <Icon />
           </div>
           <span className="text-center text-xs sm:text-medium font-medium text-ellipsis">
-            {label}
+            {category.label}
           </span>
         </button>
       ))}
