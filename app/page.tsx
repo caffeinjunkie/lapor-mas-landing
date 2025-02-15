@@ -58,7 +58,7 @@ export default function Home() {
 
   return (
     <section className="flex flex-col items-center py-2">
-      <Skeleton className="rounded-lg" isLoaded={isCoordinatesLoaded} >
+      <Skeleton className="rounded-lg" isLoaded={isCoordinatesLoaded}>
         <Button
           color="default"
           startContent={coordinates ? <MapIcon /> : <RefreshIcon />}
