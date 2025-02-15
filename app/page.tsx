@@ -4,6 +4,7 @@ import React from "react";
 import { CameraType } from "react-camera-pro";
 import { button as buttonStyles } from "@heroui/theme";
 import { Button } from "@heroui/button";
+import { Skeleton } from "@heroui/skeleton";
 import {
   Modal,
   ModalContent,
@@ -14,7 +15,7 @@ import {
 } from "@heroui/modal";
 
 import { title, subtitle } from "@/components/primitives";
-import { CameraIcon, RefreshIcon } from "@/components/icons";
+import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
 
 export default function Home() {
@@ -22,6 +23,9 @@ export default function Home() {
   const [image, setImage] = React.useState<string | null>(null);
   const [deviceReady, setDeviceReady] = React.useState(false);
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
+  const [coordinates, setCoordinates] = React.useState<string | null>(null);
+  const [isCoordinatesLoaded, setIsCoordinatesLoaded] =
+    React.useState<boolean>(true);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -29,6 +33,16 @@ export default function Home() {
       setDeviceReady(false);
     }
   }, [isOpen]);
+
+  const refreshLocation = () => {
+    if (!coordinates) {
+      setIsCoordinatesLoaded(false);
+      setTimeout(() => {
+        setCoordinates("abcd");
+        setIsCoordinatesLoaded(true);
+      }, 1000);
+    }
+  };
 
   const takePhoto = () => {
     if (cameraRef.current) {
@@ -43,82 +57,94 @@ export default function Home() {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-xl text-center justify-center">
-        <span className={title()}>Make&nbsp;</span>
-        <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
-        <br />
-        <span className={title()}>
-          websites regardless of your design experience.
-        </span>
-        <div className={subtitle({ class: "mt-4" })}>
-          Beautiful, fast and modern React UI library.
-        </div>
-      </div>
-
-      <div className="flex gap-3">
-        <Modal
-          isOpen={isOpen}
-          placement="bottom-center"
-          onOpenChange={onOpenChange}
-        >
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col items-center gap-1">
-                  Foto Barang Bukti!
-                </ModalHeader>
-                <ModalBody className="gap-4">
-                  <Camera
-                    ref={cameraRef}
-                    deviceReady={deviceReady}
-                    image={image}
-                    setDeviceReady={setDeviceReady}
-                  />
-                </ModalBody>
-                <ModalFooter className="flex flex-row items-center justify-between">
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Batal
-                  </Button>
-                  {!image && (
-                    <Button
-                      isIconOnly
-                      color="danger"
-                      isDisabled={!deviceReady}
-                      radius="full"
-                      onPress={takePhoto}
-                    >
-                      <CameraIcon fill="white" />
-                    </Button>
-                  )}
-                  {image && (
-                    <Button
-                      color="default"
-                      startContent={<RefreshIcon />}
-                      variant="light"
-                      onPress={retakePhoto}
-                    >
-                      Ulangi
-                    </Button>
-                  )}
-                  <Button color="primary" isDisabled={!image} variant="light">
-                    Lanjut
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
+    <section className="flex flex-col items-center py-2">
+      <Skeleton isLoaded={isCoordinatesLoaded} className="rounded-lg">
         <Button
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          onPress={onOpen}
+          color="default"
+          startContent={coordinates ? <MapIcon /> : <RefreshIcon />}
+          variant="light"
+          onPress={refreshLocation}
         >
-          Lapor Sekarang!
+          {coordinates ? "Sukolilo" : "Mual ulang lokasi"}
         </Button>
+      </Skeleton>
+      <div className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+        <div className="inline-block max-w-xl text-center justify-center">
+          <span className={title()}>Make&nbsp;</span>
+          <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
+          <br />
+          <span className={title()}>
+            websites regardless of your design experience.
+          </span>
+          <div className={subtitle({ class: "mt-4" })}>
+            Beautiful, fast and modern React UI library.
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <Modal
+            isOpen={isOpen}
+            placement="bottom-center"
+            onOpenChange={onOpenChange}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col items-center gap-1">
+                    Foto Barang Bukti!
+                  </ModalHeader>
+                  <ModalBody className="gap-4">
+                    <Camera
+                      ref={cameraRef}
+                      deviceReady={deviceReady}
+                      image={image}
+                      setDeviceReady={setDeviceReady}
+                    />
+                  </ModalBody>
+                  <ModalFooter className="flex flex-row items-center justify-between">
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      Batal
+                    </Button>
+                    {!image && (
+                      <Button
+                        isIconOnly
+                        color="danger"
+                        isDisabled={!deviceReady}
+                        radius="full"
+                        onPress={takePhoto}
+                      >
+                        <CameraIcon fill="white" />
+                      </Button>
+                    )}
+                    {image && (
+                      <Button
+                        color="default"
+                        startContent={<RefreshIcon />}
+                        variant="light"
+                        onPress={retakePhoto}
+                      >
+                        Ulangi
+                      </Button>
+                    )}
+                    <Button color="primary" isDisabled={!image} variant="light">
+                      Lanjut
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+          <Button
+            className={buttonStyles({
+              color: "primary",
+              radius: "full",
+              variant: "shadow",
+            })}
+            onPress={onOpen}
+          >
+            Lapor Sekarang!
+          </Button>
+        </div>
       </div>
     </section>
   );

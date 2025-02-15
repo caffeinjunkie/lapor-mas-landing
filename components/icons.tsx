@@ -170,19 +170,55 @@ export const RefreshIcon = ({
     {...props}
   >
     <g id="SVGRepo_bgCarrier" strokeWidth="0" />
-
     <g
       id="SVGRepo_tracerCarrier"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-
     <g id="SVGRepo_iconCarrier">
       <path
         clipRule="evenodd"
         d="M289.088 296.704h92.992a32 32 0 0 1 0 64H232.96a32 32 0 0 1-32-32V179.712a32 32 0 0 1 64 0v50.56a384 384 0 0 1 643.84 282.88 384 384 0 0 1-383.936 384 384 384 0 0 1-384-384h64a320 320 0 1 0 640 0 320 320 0 0 0-555.712-216.448z"
         fill={fill}
         fillRule="evenodd"
+      />
+    </g>
+  </svg>
+);
+
+export const MapIcon = ({
+  size = 18,
+  fill = "currentColor",
+  width,
+  height,
+  ...props
+}: IconSvgProps) => (
+  <svg
+    fill="none"
+    height={height || size}
+    viewBox="0 0 24 24"
+    width={width || size}
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <g id="SVGRepo_bgCarrier" strokeWidth="0" />
+    <g
+      id="SVGRepo_tracerCarrier"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <g id="SVGRepo_iconCarrier">
+      <path
+        d="M12.5 7.04148C12.3374 7.0142 12.1704 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13C13.6569 13 15 11.6569 15 10C15 9.82964 14.9858 9.6626 14.9585 9.5"
+        stroke={fill}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M5 15.2161C4.35254 13.5622 4 11.8013 4 10.1433C4 5.64588 7.58172 2 12 2C16.4183 2 20 5.64588 20 10.1433C20 14.6055 17.4467 19.8124 13.4629 21.6744C12.5343 22.1085 11.4657 22.1085 10.5371 21.6744C9.26474 21.0797 8.13831 20.1439 7.19438 19"
+        stroke={fill}
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
     </g>
   </svg>
