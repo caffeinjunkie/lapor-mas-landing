@@ -71,8 +71,8 @@ export default function Home() {
                 <ModalBody className="gap-4">
                   <Camera
                     ref={cameraRef}
-                    image={image}
                     deviceReady={deviceReady}
+                    image={image}
                     setDeviceReady={setDeviceReady}
                   />
                 </ModalBody>

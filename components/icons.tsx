@@ -163,10 +163,10 @@ export const RefreshIcon = ({
 }: IconSvgProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={width || size}
-    height={height || size}
-    viewBox="0 0 1024 1024"
     fill="none"
+    height={height || size}
+    width={width || size}
+    viewBox="0 0 1024 1024"
     {...props}
   >
     <g id="SVGRepo_bgCarrier" strokeWidth="0" />
