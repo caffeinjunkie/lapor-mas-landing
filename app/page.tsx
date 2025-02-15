@@ -95,8 +95,8 @@ export default function Home() {
                     <Button
                       color="default"
                       variant="light"
-                      startContent={<RefreshIcon />}
                       onPress={retakePhoto}
+                      startContent={<RefreshIcon />}
                     >
                       Ulangi
                     </Button>

@@ -165,8 +165,8 @@ export const RefreshIcon = ({
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     height={height || size}
-    width={width || size}
     viewBox="0 0 1024 1024"
+    width={width || size}
     {...props}
   >
     <g id="SVGRepo_bgCarrier" strokeWidth="0" />
