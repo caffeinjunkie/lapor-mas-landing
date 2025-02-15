@@ -107,7 +107,7 @@ export default function Home() {
   };
 
   return (
-    <section className="flex flex-col items-center pt-2">
+    <section className="flex flex-col items-center pt-2 min-h-72">
       <Skeleton
         className="rounded-lg"
         isLoaded={isAddressLoaded && (address !== null || error !== null)}
