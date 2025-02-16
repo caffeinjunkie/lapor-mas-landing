@@ -1,8 +1,10 @@
 # e-LAPOR mas WAPRES 🧐
 
+[lapormas-light](https://github.com/user-attachments/assets/b5d4572a-b4f2-43cb-abae-e03cc150dea8)
+
 ### [e-lapormas landing page is live! 🚀🤤](https://lapor-mas-landing-zupq.vercel.app/)
 
-### Overview
+### Overview!
 
 e-LAPOR mas WAPRES is a citizen reporting application that allows users to report incidents with photos based on specific categories. The platform also displays reported incidents in a list format for transparency and follow-up actions.
 
