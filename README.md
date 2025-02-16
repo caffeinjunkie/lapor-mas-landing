@@ -1,6 +1,6 @@
 # e-LAPOR mas WAPRES 🧐
 
-[lapormas-light](https://github.com/user-attachments/assets/b5d4572a-b4f2-43cb-abae-e03cc150dea8)
+![alt text](https://github.com/caffeinjunkie/lapor-mas-landing/blob/master/public/lapormas-light.png?raw=true)
 
 ### [e-lapormas landing page is live! 🚀🤤](https://lapor-mas-landing-zupq.vercel.app/)
 
