@@ -12,11 +12,12 @@ const Menu = ({ onMenuPress }: MenuProps) => (
       {categories.map(({ Icon, ...category }, index) => (
         <button
           key={index}
-          onClick={() => onMenuPress(category)}
           className="group flex flex-col
             items-center gap-4
             overflow-hidden
+            outline-none
             transform transition-transform duration-200 active:scale-95"
+          onClick={() => onMenuPress(category)}
         >
           <div
             className="flex flex-col items-center

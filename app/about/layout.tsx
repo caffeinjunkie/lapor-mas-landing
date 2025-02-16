@@ -10,7 +10,7 @@ export default function AboutLayout({
       <div className="inline-block max-w-lg text-center justify-center">
         {children}
       </div>
-      <footer className="w-full flex items-center justify-center py-3 absolute bottom-[24]">
+      <footer className="w-full flex items-center justify-center py-3 absolute bottom-4">
         <Link
           isExternal
           className="flex items-center gap-1 text-current"
