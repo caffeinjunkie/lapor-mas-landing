@@ -3,13 +3,10 @@ import { Input, Textarea } from "@heroui/input";
 import { Form } from "@heroui/form";
 import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
-import { getLocalTimeZone, now } from "@internationalized/date";
 
 import { categories, Category } from "@/config/complaint-category";
 import { FileIcon } from "@/components/icons";
 import { Address } from "@/utils/google-maps";
-import { formatDate } from "@/utils/date";
-import { saveToSessionStorage, SessionData } from "@/utils/session-storage";
 
 interface ComplaintFormProps {
   address: Address | null;
@@ -17,7 +14,7 @@ interface ComplaintFormProps {
   setCategory: (category: Category) => void;
   onClose: () => void;
   isCategorySelectionLocked: boolean;
-  handleGetData: () => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export const ComplaintForm = ({
@@ -26,23 +23,14 @@ export const ComplaintForm = ({
   isCategorySelectionLocked,
   setCategory,
   onClose,
-  handleGetData,
+  onSubmit,
 }: ComplaintFormProps) => (
   <Form
     className="w-full max-w-xl flex flex-col gap-4"
     validationBehavior="native"
-    onSubmit={(e) => {
-      e.preventDefault();
-      const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
-      const enrichedData: any = {
-        ...dataFromEntries,
-        category: category?.label,
-        date: formatDate(now(getLocalTimeZone()).toString()),
-      };
-
-      saveToSessionStorage(enrichedData);
+    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+      onSubmit(e);
       onClose();
-      handleGetData();
     }}
   >
     <Input
@@ -60,10 +48,11 @@ export const ComplaintForm = ({
     />
     <Select
       isRequired
-      isDisabled={isCategorySelectionLocked}
       defaultSelectedKeys={[category?.label || ""]}
+      isDisabled={isCategorySelectionLocked}
       label="Kategori Laporan"
       name="category"
+      placeholder="Pilih kategori laporan"
       onChange={(event) => {
         setCategory({
           label: event.target.value,
@@ -72,7 +61,6 @@ export const ComplaintForm = ({
           )[0].addressRequired,
         });
       }}
-      placeholder="Pilih kategori laporan"
     >
       {Object.entries(categories).map((category) => (
         <SelectItem key={category[1].label}>{category[1].label}</SelectItem>
@@ -81,12 +69,12 @@ export const ComplaintForm = ({
     {category?.addressRequired && (
       <Input
         isRequired
+        defaultValue={address?.formattedAddress ?? ""}
         errorMessage="Mohon masukkan alamat kejadian."
         label="Alamat"
         name="address"
         placeholder="Tulis alamat kejadian"
         type="text"
-        defaultValue={address?.formattedAddress ?? ""}
       />
     )}
     <div className="flex flex-row py-4 items-center justify-center gap-1 w-full">
@@ -94,7 +82,7 @@ export const ComplaintForm = ({
       <p className="text-small font-medium">File terlampir</p>
     </div>
     <div className="flex w-full justify-between pb-2">
-      <Button onPress={onClose} color="danger" variant="light">
+      <Button color="danger" variant="light" onPress={onClose}>
         Batal
       </Button>
       <Button color="primary" type="submit">
