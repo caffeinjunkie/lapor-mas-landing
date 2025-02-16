@@ -13,7 +13,5 @@ export const formatDate = (dateString: string) => {
 
   const formattedDate = date.toLocaleString("id-ID", options);
 
-  console.log(formattedDate, "tes");
-
   return formattedDate.replace(/(\d{2})(?=\D)/, "$1");
 };
