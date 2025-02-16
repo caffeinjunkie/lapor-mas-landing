@@ -8,7 +8,7 @@ type MenuProps = {
 
 const Menu = ({ onMenuPress }: MenuProps) => (
   <div className="py-6">
-    <div className="grid grid-cols-4 gap-4 md:grid-cols-8">
+    <div className="grid grid-cols-4 gap-4 lg:grid-cols-8">
       {categories.map(({ Icon, ...category }, index) => (
         <button
           key={index}

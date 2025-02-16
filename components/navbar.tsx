@@ -50,29 +50,27 @@ export const Navbar = () => {
   return (
     <HeroUINavbar
       isMenuOpen={navbarOpen}
-      onMenuOpenChange={() => setNavbarOpen(!navbarOpen)}
       maxWidth="xl"
       position="sticky"
+      onMenuOpenChange={() => setNavbarOpen(!navbarOpen)}
     >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink
             className="flex justify-start items-center gap-1"
-            onClick={() => setNavbarOpen(false)}
             href="/"
+            onClick={() => setNavbarOpen(false)}
           >
-            {/*<Logo />*/}
             <Image
-              color="#fff"
-              src={currentTheme === "light" ? laporMasLight : laporMasDark}
               alt="logo"
-              width={64}
+              color="#fff"
               height={64}
+              src={currentTheme === "light" ? laporMasLight : laporMasDark}
+              width={64}
             />
-            {/*<p className="font-bold text-inherit">ACME</p>*/}
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
+        <ul className="hidden sm:flex gap-4 justify-start ml-2">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <NextLink
@@ -138,16 +136,16 @@ export const Navbar = () => {
                     : "foreground"
                 }
                 href={item.href}
+                rel="noopener noreferrer"
+                size="lg"
+                target={
+                  index === siteConfig.navMenuItems.length - 1 ? "" : "_blank"
+                }
                 onPress={
                   index === siteConfig.navMenuItems.length - 1
                     ? () => setNavbarOpen(false)
                     : () => {}
                 }
-                target={
-                  index === siteConfig.navMenuItems.length - 1 ? "" : "_blank"
-                }
-                rel="noopener noreferrer"
-                size="lg"
               >
                 {item.label}
               </Link>
