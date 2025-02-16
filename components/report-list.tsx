@@ -10,12 +10,13 @@ type ItemProps = {
   title: string;
   category: string;
   date: string;
+  image?: string;
   isLast: boolean;
 };
 
 export const ReportList = ({ children }: BottomSheetProps) => {
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2 md:gap-4">
       <p className="text-medium font-semibold text-left md:text-center">
         Kasus Terlapor
       </p>
@@ -24,7 +25,7 @@ export const ReportList = ({ children }: BottomSheetProps) => {
   );
 };
 
-export const Item = ({ title, category, date, isLast }: ItemProps) => {
+export const Item = ({ title, category, date, isLast, image }: ItemProps) => {
   const Icon = categories.filter(({ label }) => label === category)[0].Icon;
 
   return (
@@ -32,7 +33,14 @@ export const Item = ({ title, category, date, isLast }: ItemProps) => {
       className={`flex items-center gap-3 w-full p-4 ${!isLast ? "border-b-2 border-gray-500/20" : ""}`}
     >
       <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-400/20 rounded-md overflow-hidden flex items-center justify-center">
-        <Icon size={48} />
+        {!image && <Icon size={48} />}
+        {image && (
+          <img
+            alt={title}
+            className="object-cover w-16 h-16 md:w-20 md:h-20"
+            src={image}
+          />
+        )}
       </div>
       <div className="flex flex-1 flex-col w-24 overflow-hidden">
         <p className="text-[10px] md:text-xs">{category}</p>

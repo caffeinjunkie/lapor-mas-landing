@@ -6,7 +6,7 @@ type MenuProps = {
   onMenuPress: (category: { label: string; addressRequired: boolean }) => void;
 };
 
-const Menu = ({ onMenuPress }: MenuProps) => (
+export const Menu = ({ onMenuPress }: MenuProps) => (
   <div className="py-6">
     <div className="grid grid-cols-4 gap-4 lg:grid-cols-8">
       {categories.map(({ Icon, ...category }, index) => (
@@ -35,5 +35,3 @@ const Menu = ({ onMenuPress }: MenuProps) => (
     </div>
   </div>
 );
-
-export default Menu;

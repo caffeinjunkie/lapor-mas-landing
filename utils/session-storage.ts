@@ -4,6 +4,7 @@ export interface SessionData {
   date: string;
   category: string;
   location?: string;
+  image?: string;
 }
 
 /**
@@ -13,9 +14,9 @@ export interface SessionData {
 export const saveToSessionStorage = (data: SessionData): void => {
   try {
     const existingData = getFromSessionStorage() || [];
-    console.log(existingData, data, "ja ncok");
     const updatedDate = [...existingData, data];
     const serializedData = JSON.stringify(updatedDate);
+
     sessionStorage.setItem("sessionData", serializedData);
   } catch (error) {
     console.error("Could not save data to sessionStorage", error);
@@ -29,12 +30,15 @@ export const saveToSessionStorage = (data: SessionData): void => {
 export const getFromSessionStorage = (): SessionData[] => {
   try {
     const serializedData = sessionStorage.getItem("sessionData");
+
     if (serializedData === null) {
       return [];
     }
+
     return JSON.parse(serializedData);
   } catch (error) {
     console.error("Could not retrieve data from sessionStorage", error);
+
     return [];
   }
 };

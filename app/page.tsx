@@ -12,21 +12,27 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@heroui/modal";
+import { getLocalTimeZone, now } from "@internationalized/date";
 
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
-import Menu from "@/components/menu";
+import { Menu } from "@/components/menu";
 import { ReportList } from "@/components/report-list";
 import { Category } from "@/config/complaint-category";
 import { Address, findAddress } from "@/utils/google-maps";
 import { ComplaintForm } from "@/components/complaint-form";
-import { getFromSessionStorage, SessionData } from "@/utils/session-storage";
+import {
+  getFromSessionStorage,
+  saveToSessionStorage,
+  SessionData,
+} from "@/utils/session-storage";
+import { formatDate } from "@/utils/date";
 
 export default function Home() {
   const cameraRef = React.useRef<CameraType>(null);
   const [image, setImage] = React.useState<string | null>(null);
   const [deviceReady, setDeviceReady] = React.useState(false);
-  const [complaintCategory, setComplaintCategory] =
+  const [selectedCategory, setSelectedCategory] =
     React.useState<Category | null>(null);
   const [isStep2, setIsStep2] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -48,7 +54,7 @@ export default function Home() {
       setImage(null);
       setDeviceReady(false);
       setIsStep2(false);
-      setComplaintCategory(null);
+      setSelectedCategory(null);
       setIsCategoryLocked(false);
     }
   }, [isOpen]);
@@ -101,9 +107,23 @@ export default function Home() {
   };
 
   const selectMenu = (category: Category) => {
-    setComplaintCategory(category);
+    setSelectedCategory(category);
     onOpen();
     setIsCategoryLocked(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
+    const enrichedData: any = {
+      ...dataFromEntries,
+      image,
+      category: selectedCategory?.label,
+      date: formatDate(now(getLocalTimeZone()).toString()),
+    };
+
+    saveToSessionStorage(enrichedData);
+    handleGetData();
   };
 
   return (
@@ -131,11 +151,15 @@ export default function Home() {
           {publicReports.length === 0 && <ReportList.Empty />}
           {publicReports &&
             publicReports.map(
-              ({ title, category, date }: SessionData, index: number) => (
+              (
+                { title, category, date, image }: SessionData,
+                index: number,
+              ) => (
                 <ReportList.Item
                   key={index}
                   category={category}
                   date={date}
+                  image={image}
                   isLast={index === publicReports.length - 1}
                   title={title}
                 />
@@ -166,11 +190,11 @@ export default function Home() {
                     {isStep2 && (
                       <ComplaintForm
                         address={address}
-                        category={complaintCategory}
-                        handleGetData={handleGetData}
+                        category={selectedCategory}
                         isCategorySelectionLocked={isCategoryLocked}
-                        setCategory={setComplaintCategory}
+                        setCategory={setSelectedCategory}
                         onClose={onClose}
+                        onSubmit={handleSubmit}
                       />
                     )}
                   </ModalBody>
