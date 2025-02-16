@@ -217,10 +217,11 @@ export default function Home() {
               )}
             </ModalContent>
           </Modal>
-          <div className="w-full fixed flex justify-center bottom-0 py-8 left-0">
+          <div className="w-full fixed flex justify-center bottom-0 pt-4 pb-10 left-0">
             <Button
               color="primary"
               radius="full"
+              size="lg"
               startContent={<CameraIcon />}
               variant="shadow"
               onPress={onOpen}
