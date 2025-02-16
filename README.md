@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="140px" src="https://github.com/caffeinjunkie/lapor-mas-landing/blob/master/public/lapormas-dark.png?raw=true" alt="Your Image Description" />
+  <img width="200px" src="https://github.com/caffeinjunkie/lapor-mas-landing/blob/master/public/lapormas-dark.png?raw=true" alt="Your Image Description" />
 </p>
 
 <p align="center">
