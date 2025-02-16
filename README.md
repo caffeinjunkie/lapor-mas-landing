@@ -1,28 +1,54 @@
-# Next.js & HeroUI Template
+# e-LAPOR mas WAPRES 🧐
 
-This is a template for creating applications using Next.js 14 (app directory) and HeroUI (v2).
+### [e-lapormas landing page is live! 🚀🤤](https://lapor-mas-landing-zupq.vercel.app/)
 
-[Try it on CodeSandbox](https://githubbox.com/heroui-inc/heroui/next-app-template)
+### Overview
+
+e-LAPOR mas WAPRES is a citizen reporting application that allows users to report incidents with photos based on specific categories. The platform also displays reported incidents in a list format for transparency and follow-up actions.
+
+### Features
+
+1. Report an Incident 
+   - Users can report incidents by selecting a category or do a quick report by pressing the floating "Lapor Sekarang!" button. 
+   - Attach photos to provide visual evidence. 
+   - Submit reports easily through an intuitive interface.
+
+2. View Reported Incidents 
+   - A list of reported incidents.
+   - Each report includes title, image, category and date.
+
+### Categories
+- Kebijakan Publik (Public Policy)
+- Kondisi Jalan (Road Conditions)
+- Fasilitas Umum (Public Facilities)
+- Makan Bergizi (Nutritious Food)
+- Program Pemerintah (Government Programs)
+- Keamanan (Security)
+- Pungli (Illegal Levies)
+- Lainnya (Others)
+
+### How to Use
+1. Open the application and select the relevant category or press "Lapor Sekarang!" button. 
+2. Snap a photo of the incident. 
+3. Write a report including title, more detailed description as well as category and/or address if applicable. 
+4. Submit the report. 
+5. View submitted reports.
+
+### Future Enhancements
+- Implement more detailed view of the report. 
+- Add status tracking for each report (Pending, In Progress, Resolved).
 
 ## Technologies Used
 
 - [Next.js 14](https://nextjs.org/docs/getting-started)
 - [HeroUI v2](https://heroui.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
 
-## How to Use
+## How to Run the Project
 
-### Use the template with create-next-app
-
-To create a new project based on this template using `create-next-app`, run the following command:
-
-```bash
-npx create-next-app -e https://github.com/heroui-inc/next-app-template
-```
+After cloning the project, install the dependencies then run the development server.
 
 ### Install dependencies
 
@@ -37,16 +63,6 @@ npm install
 ```bash
 npm run dev
 ```
-
-### Setup pnpm (optional)
-
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
-
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
-
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
 
 ## License
 
