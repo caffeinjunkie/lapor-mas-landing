@@ -90,7 +90,7 @@ export default function Home() {
   const handleGetData = () => {
     const storedData = getFromSessionStorage();
 
-    setPublicReports(storedData);
+    setPublicReports([...storedData].reverse());
   };
 
   const takePhoto = () => {

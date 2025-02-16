@@ -12,16 +12,17 @@ e-LAPOR mas WAPRES is a citizen reporting application that allows users to repor
 
 ### Features
 
-1. Report an Incident 
-   - Users can report incidents by selecting a category or do a quick report by pressing the floating "Lapor Sekarang!" button. 
-   - Attach photos to provide visual evidence. 
+1. Report an Incident
+   - Users can report incidents by selecting a category or do a quick report by pressing the floating "Lapor Sekarang!" button.
+   - Attach photos to provide visual evidence.
    - Submit reports easily through an intuitive interface.
 
-2. View Reported Incidents 
+2. View Reported Incidents
    - A list of reported incidents.
    - Each report includes title, image, category and date.
 
 ### Categories
+
 - Kebijakan Publik (Public Policy)
 - Kondisi Jalan (Road Conditions)
 - Fasilitas Umum (Public Facilities)
@@ -32,14 +33,16 @@ e-LAPOR mas WAPRES is a citizen reporting application that allows users to repor
 - Lainnya (Others)
 
 ### How to Use
-1. Open the application and select the relevant category or press "Lapor Sekarang!" button. 
-2. Snap a photo of the incident. 
-3. Write a report including title, more detailed description as well as category and/or address if applicable. 
-4. Submit the report. 
+
+1. Open the application and select the relevant category or press "Lapor Sekarang!" button.
+2. Snap a photo of the incident.
+3. Write a report including title, more detailed description as well as category and/or address if applicable.
+4. Submit the report.
 5. View submitted reports.
 
 ### Future Enhancements
-- Implement more detailed view of the report. 
+
+- Implement more detailed view of the report.
 - Add status tracking for each report (Pending, In Progress, Resolved).
 
 ## Technologies Used
