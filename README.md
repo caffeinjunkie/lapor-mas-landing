@@ -1,8 +1,10 @@
-# e-LAPOR mas WAPRES 🧐
+<p align="center">
+  <img width="140px" src="https://github.com/caffeinjunkie/lapor-mas-landing/blob/master/public/lapormas-dark.png?raw=true" alt="Your Image Description" />
+</p>
 
-![alt text](https://github.com/caffeinjunkie/lapor-mas-landing/blob/master/public/lapormas-light.png?raw=true)
-
-### [e-lapormas landing page is live! 🚀🤤](https://lapor-mas-landing-zupq.vercel.app/)
+<p align="center">
+   <a href="https://lapor-mas-landing-zupq.vercel.app/">e-lapormas landing page is live! 🚀 🤤 🧐</a>
+</p>
 
 ### Overview!
 
