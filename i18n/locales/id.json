@@ -15,7 +15,9 @@
     "create-report-cta-text": "Lapor Sekarang!",
     "create-report-continue-text": "Lanjut",
     "create-report-cancel-text": "Batal",
-    "create-report-redo-text": "Ulangi"
+    "create-report-redo-text": "Ulangi",
+    "failed-to-load-error-text": "Gagal memuat lokasi: {message}",
+    "gps-failed-error-text": "GPS tidak terdeteksi."
   },
   "Navbar": {
     "check-report-text": "Cek laporan mu disini!"

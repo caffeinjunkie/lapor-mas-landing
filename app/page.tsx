@@ -52,7 +52,7 @@ export default function Home() {
     const fetchPublicReports = async () => {
       const { data } = await fetchTasks();
 
-      setPublicReports([]);
+      setPublicReports(data as Report[]);
     };
 
     fetchPublicReports();
@@ -87,12 +87,12 @@ export default function Home() {
           }
         },
         (err) => {
-          setError(`Gagal memuat lokasi: ${err.message}`);
+          setError(t("failed-to-load-error-text", { message: err.message }));
           setIsAddressLoaded(true);
         },
       );
     } else {
-      setError("GPS tidak terdeteksi.");
+      setError(t("gps-failed-error-text"));
       setIsAddressLoaded(true);
     }
   };
