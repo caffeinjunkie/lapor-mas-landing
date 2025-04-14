@@ -17,7 +17,7 @@ import { getLocalTimeZone, now } from "@internationalized/date";
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
 import { Menu } from "@/components/menu";
-import { ReportList } from "@/components/report-list";
+import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import { Address, findAddress } from "@/utils/google-maps";
 import { ComplaintForm } from "@/components/complaint-form";
@@ -28,6 +28,8 @@ import {
 } from "@/utils/session-storage";
 import { formatDate } from "@/utils/date";
 import { useTranslations } from "next-intl";
+import { fetchTasks } from "@/api/tasks";
+import { Report } from "@/types/report.types";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -42,13 +44,19 @@ export default function Home() {
   const [isAddressLoaded, setIsAddressLoaded] = React.useState<boolean>(true);
   const [isCategoryLocked, setIsCategoryLocked] =
     React.useState<boolean>(false);
-  const [publicReports, setPublicReports] = React.useState<SessionData[]>([]);
-
+  const [publicReports, setPublicReports] = React.useState<Report[]>([]);
+  
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
 
   React.useEffect(() => {
+    const fetchPublicReports = async () => {
+      const { data } = await fetchTasks();
+
+      setPublicReports([]);
+    };
+
+    fetchPublicReports();
     refreshLocation();
-    handleGetData();
   }, []);
 
   React.useEffect(() => {
@@ -89,12 +97,6 @@ export default function Home() {
     }
   };
 
-  const handleGetData = () => {
-    const storedData = getFromSessionStorage();
-
-    setPublicReports([...storedData].reverse());
-  };
-
   const takePhoto = () => {
     if (cameraRef.current) {
       const photo = cameraRef.current.takePhoto();
@@ -124,8 +126,9 @@ export default function Home() {
       date: formatDate(now(getLocalTimeZone()).toString()),
     };
 
-    saveToSessionStorage(enrichedData);
-    handleGetData();
+    // saveToSessionStorage(enrichedData);
+    // update state
+
   };
 
   return (
@@ -149,21 +152,21 @@ export default function Home() {
       </Skeleton>
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
-        <ReportList title={t("newest-reports-text")}>
+        <ReportList title={t("newest-reports-text")} isEmpty={publicReports.length === 0}>
           {publicReports.length === 0 && (
             <ReportList.Empty value={t("empty-text")} />
           )}
           {publicReports &&
             publicReports.map(
               (
-                { title, category, date, image }: SessionData,
+                { title, category, created_at, images }: Report,
                 index: number,
               ) => (
                 <ReportList.Item
                   key={index}
                   category={category}
-                  date={date}
-                  image={image}
+                  date={created_at}
+                  image={images?.[0]}
                   isLast={index === publicReports.length - 1}
                   title={title}
                 />
@@ -205,7 +208,7 @@ export default function Home() {
                   {!isStep2 && (
                     <ModalFooter className="flex flex-row items-center justify-between">
                       <Button color="danger" variant="light" onPress={onClose}>
-                        Batal
+                        {t("create-report-cancel-text")}
                       </Button>
                       {!image && (
                         <Button
@@ -225,7 +228,7 @@ export default function Home() {
                           variant="light"
                           onPress={retakePhoto}
                         >
-                          Ulangi
+                          {t("create-report-redo-text")}
                         </Button>
                       )}
                       {!isStep2 && (
@@ -236,7 +239,7 @@ export default function Home() {
                           variant="light"
                           onPress={() => setIsStep2(true)}
                         >
-                          Lanjut
+                          {t("create-report-continue-text")}
                         </Button>
                       )}
                     </ModalFooter>
@@ -254,7 +257,7 @@ export default function Home() {
               variant="shadow"
               onPress={onOpen}
             >
-              Lapor Sekarang!
+              {t("create-report-cta-text")}
             </Button>
           </div>
         </div>

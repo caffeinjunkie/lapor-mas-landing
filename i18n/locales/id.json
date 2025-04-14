@@ -7,11 +7,15 @@
     "category-kebijakan-publik-text": "Kebijakan Publik",
     "category-kondisi-jalan-text": "Kondisi Jalan",
     "category-fasilitas-umum-text": "Fasilitas Umum",
-    "category-makan-bergizi-text": "Makan Bergizi",
+    "category-makanan-bergizi-text": "Makan Bergizi",
     "category-program-pemerintah-text": "Program Pemerintah",
     "category-keamanan-text": "Keamanan",
     "category-pungli-text": "Pungli",
-    "category-lainnya-text": "Lainnya"
+    "category-lainnya-text": "Lainnya",
+    "create-report-cta-text": "Lapor Sekarang!",
+    "create-report-continue-text": "Lanjut",
+    "create-report-cancel-text": "Batal",
+    "create-report-redo-text": "Ulangi"
   },
   "Navbar": {
     "check-report-text": "Cek laporan mu disini!"

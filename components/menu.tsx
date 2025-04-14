@@ -1,10 +1,10 @@
 import React from "react";
 
-import { categories } from "@/config/complaint-category";
+import { categories, Category } from "@/config/complaint-category";
 import { useTranslations } from "next-intl";
 
 type MenuProps = {
-  onMenuPress: (category: { label: string; addressRequired: boolean }) => void;
+  onMenuPress: (category: Category) => void;
 };
 
 export const Menu = ({ onMenuPress }: MenuProps) => {
