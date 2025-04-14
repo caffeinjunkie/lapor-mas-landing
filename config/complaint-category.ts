@@ -12,14 +12,38 @@ import * as React from "react";
 import { IconSvgProps } from "@/types";
 
 export const categories: CategoryProps[] = [
-  { Icon: BillIcon, label: "Kebijakan Publik", addressRequired: false },
-  { Icon: ConeIcon, label: "Kondisi Jalan", addressRequired: true },
-  { Icon: PublicFacilityIcon, label: "Fasilitas Umum", addressRequired: true },
-  { Icon: FoodIcon, label: "Makan Bergizi", addressRequired: true },
-  { Icon: BuildingIcon, label: "Program Pemerintah", addressRequired: false },
-  { Icon: SecurityIcon, label: "Keamanan", addressRequired: true },
-  { Icon: CoinIcon, label: "Pungli", addressRequired: true },
-  { Icon: OthersIcon, label: "Lainnya", addressRequired: false },
+  {
+    Icon: BillIcon,
+    label: "category-kebijakan-publik-text",
+    addressRequired: false,
+  },
+  {
+    Icon: ConeIcon,
+    label: "category-kondisi-jalan-text",
+    addressRequired: true,
+  },
+  {
+    Icon: PublicFacilityIcon,
+    label: "category-fasilitas-umum-text",
+    addressRequired: true,
+  },
+  {
+    Icon: FoodIcon,
+    label: "category-makan-bergizi-text",
+    addressRequired: true,
+  },
+  {
+    Icon: BuildingIcon,
+    label: "category-program-pemerintah-text",
+    addressRequired: false,
+  },
+  {
+    Icon: SecurityIcon,
+    label: "category-keamanan-text",
+    addressRequired: true,
+  },
+  { Icon: CoinIcon, label: "category-pungli-text", addressRequired: true },
+  { Icon: OthersIcon, label: "category-lainnya-text", addressRequired: false },
 ];
 
 export type Category = {

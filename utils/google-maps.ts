@@ -31,7 +31,7 @@ export const findAddress = async (
 
       return { formattedAddress, adminArea3 };
     } else {
-      throw new Error("Mual ulang lokasi");
+      throw new Error("fetch-location-failed-error-text");
     }
   } catch (err) {
     throw err;

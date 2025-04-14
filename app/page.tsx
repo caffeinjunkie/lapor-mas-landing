@@ -27,8 +27,10 @@ import {
   SessionData,
 } from "@/utils/session-storage";
 import { formatDate } from "@/utils/date";
+import { useTranslations } from "next-intl";
 
 export default function Home() {
+  const t = useTranslations("HomePage");
   const cameraRef = React.useRef<CameraType>(null);
   const [image, setImage] = React.useState<string | null>(null);
   const [deviceReady, setDeviceReady] = React.useState(false);
@@ -141,14 +143,16 @@ export default function Home() {
           {address
             ? `${address.adminArea3}`
             : error
-              ? `${error}`
-              : "Mual ulang lokasi"}
+              ? t(error)
+              : t("fetch-location-failed-error-text")}
         </Button>
       </Skeleton>
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
-        <ReportList>
-          {publicReports.length === 0 && <ReportList.Empty />}
+        <ReportList title={t("newest-reports-text")}>
+          {publicReports.length === 0 && (
+            <ReportList.Empty value={t("empty-text")} />
+          )}
           {publicReports &&
             publicReports.map(
               (

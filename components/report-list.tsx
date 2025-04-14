@@ -4,6 +4,7 @@ import { categories } from "@/config/complaint-category";
 
 interface BottomSheetProps {
   children?: React.ReactNode;
+  title: string;
 }
 
 type ItemProps = {
@@ -14,11 +15,11 @@ type ItemProps = {
   isLast: boolean;
 };
 
-export const ReportList = ({ children }: BottomSheetProps) => {
+export const ReportList = ({ title, children }: BottomSheetProps) => {
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4">
       <p className="text-medium font-semibold text-left md:text-center">
-        Kasus Terlapor
+        {title}
       </p>
       <div className="bg-gray-400/10 rounded-lg">{children}</div>
     </div>
@@ -58,9 +59,9 @@ export const Item = ({ title, category, date, isLast, image }: ItemProps) => {
   );
 };
 
-export const Empty = () => (
+export const Empty = ({ value }: { value: string }) => (
   <div className="flex items-center justify-center text-center text-small min-h-52">
-    <p color="danger">Tidak ada laporan.</p>
+    <p color="danger">{value}</p>
   </div>
 );
 

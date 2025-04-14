@@ -1,0 +1,19 @@
+{
+  "HomePage": {
+    "title": "Lapor Mas Wapres",
+    "fetch-location-failed-error-text": "Muat ulang lokasi",
+    "newest-reports-text": "Kasus Terbaru",
+    "empty-text": "Tidak ada laporan",
+    "category-kebijakan-publik-text": "Kebijakan Publik",
+    "category-kondisi-jalan-text": "Kondisi Jalan",
+    "category-fasilitas-umum-text": "Fasilitas Umum",
+    "category-makan-bergizi-text": "Makan Bergizi",
+    "category-program-pemerintah-text": "Program Pemerintah",
+    "category-keamanan-text": "Keamanan",
+    "category-pungli-text": "Pungli",
+    "category-lainnya-text": "Lainnya"
+  },
+  "Navbar": {
+    "check-report-text": "Cek laporan mu disini!"
+  }
+}

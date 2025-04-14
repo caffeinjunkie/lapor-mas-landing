@@ -13,6 +13,7 @@ e-LAPOR mas WAPRES is a citizen reporting application that allows users to repor
 ### Features
 
 1. Report an Incident
+
    - Users can report incidents by selecting a category or do a quick report by pressing the floating "Lapor Sekarang!" button.
    - Attach photos to provide visual evidence.
    - Submit reports easily through an intuitive interface.
