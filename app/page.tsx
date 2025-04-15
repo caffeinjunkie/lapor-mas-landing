@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { CameraType } from "react-camera-pro";
 import { Button } from "@heroui/button";
 import { Skeleton } from "@heroui/skeleton";
@@ -16,33 +16,38 @@ import { getLocalTimeZone, now } from "@internationalized/date";
 import useSWR from "swr";
 
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
-import { Camera } from "@/components/camera";
+import { Camera } from "@/components/form/camera";
 import { Menu } from "@/components/menu";
 import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import { Address, findAddress } from "@/utils/google-maps";
-import { ComplaintForm } from "@/components/complaint-form";
+import { ComplaintForm } from "@/components/form/complaint-form";
 import { formatDate } from "@/utils/date";
 import { useTranslations } from "next-intl";
 import { fetchTasks } from "@/api/tasks";
 import { Report } from "@/types/report.types";
 import { Spinner } from "@heroui/spinner";
+import { UploadForm } from "@/components/form/upload-form";
 
 export default function Home() {
   const t = useTranslations("HomePage");
-  const cameraRef = React.useRef<CameraType>(null);
-  const [image, setImage] = React.useState<string | null>(null);
-  const [deviceReady, setDeviceReady] = React.useState(false);
-  const [selectedCategory, setSelectedCategory] =
-    React.useState<Category | null>(null);
-  const [isStep2, setIsStep2] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [address, setAddress] = React.useState<Address | null>(null);
-  const [isAddressLoaded, setIsAddressLoaded] = React.useState<boolean>(true);
-  const [isCategoryLocked, setIsCategoryLocked] =
-    React.useState<boolean>(false);
+  const cameraRef = useRef<CameraType>(null);
+  const [image, setImage] = useState<string | null>(null);
+  const [deviceReady, setDeviceReady] = useState(false);
+  const mandatorySteps = ["info-form", "upload-form"];
+  const optionalSteps = ["follow-up-form"];
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+  const [isStep2, setIsStep2] = useState<boolean>(false);
+  const [currentStep, setCurrentStep] = useState<string>("upload-form");
+  const [error, setError] = useState<string | null>(null);
+  const [address, setAddress] = useState<Address | null>(null);
+  const [isAddressLoaded, setIsAddressLoaded] = useState<boolean>(true);
+  const [isCategoryLocked, setIsCategoryLocked] = useState<boolean>(false);
+  const [files, setFiles] = useState<File[]>([]);
 
-  const { isOpen, onOpenChange, onOpen } = useDisclosure();
+  const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
 
   const {
     data: publicReports,
@@ -159,7 +164,7 @@ export default function Home() {
         <Menu onMenuPress={selectMenu} />
         <ReportList
           title={t("newest-reports-text")}
-          isEmpty={publicReports?.length === 0}
+          isEmpty={isValidating || publicReports?.length === 0}
         >
           {isValidating && <Spinner />}
           {!isValidating && publicReports?.length === 0 && (
@@ -174,6 +179,11 @@ export default function Home() {
         <div className="flex gap-3">
           <Modal
             isOpen={isOpen}
+            onClose={() => {
+              setCurrentStep("upload-form");
+              setFiles([]);
+              onClose();
+            }}
             placement="bottom-center"
             onOpenChange={onOpenChange}
           >
@@ -181,18 +191,30 @@ export default function Home() {
               {(onClose) => (
                 <>
                   <ModalHeader className="flex flex-col items-center gap-1">
-                    Foto Barang Bukti!
+                    {t(`complaint-form-${currentStep}-title`)}
                   </ModalHeader>
                   <ModalBody className="gap-4">
-                    {!isStep2 && (
+                    {/* {!isStep2 && (
                       <Camera
                         ref={cameraRef}
                         deviceReady={deviceReady}
                         image={image}
                         setDeviceReady={setDeviceReady}
                       />
+                    )} */}
+                    {currentStep === "upload-form" && (
+                      <UploadForm
+                        onClose={onClose}
+                        files={files}
+                        setFiles={
+                          setFiles as (
+                            files: File[],
+                          ) => Dispatch<SetStateAction<File[]>>
+                        }
+                        onNext={() => setCurrentStep("info-form")}
+                      />
                     )}
-                    {isStep2 && (
+                    {currentStep === "info-form" && (
                       <ComplaintForm
                         address={address}
                         category={selectedCategory}
@@ -203,7 +225,7 @@ export default function Home() {
                       />
                     )}
                   </ModalBody>
-                  {!isStep2 && (
+                  {/* {!isStep2 && (
                     <ModalFooter className="flex flex-row items-center justify-between">
                       <Button color="danger" variant="light" onPress={onClose}>
                         {t("create-report-cancel-text")}
@@ -241,7 +263,7 @@ export default function Home() {
                         </Button>
                       )}
                     </ModalFooter>
-                  )}
+                  )} */}
                 </>
               )}
             </ModalContent>

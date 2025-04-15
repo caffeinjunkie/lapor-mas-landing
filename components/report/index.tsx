@@ -17,7 +17,7 @@ export const ReportList = ({ title, children, isEmpty }: BottomSheetProps) => {
       <div
         className={clsx(
           "grid grid-cols-1 gap-2 md:gap-4",
-          isEmpty ? "lg:grid-cols-1" : "lg:grid-cols-2",
+          isEmpty ? "lg:grid-cols-1 pt-12" : "lg:grid-cols-2",
         )}
       >
         {children}
