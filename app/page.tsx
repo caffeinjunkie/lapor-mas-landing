@@ -13,22 +13,23 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 import { getLocalTimeZone, now } from "@internationalized/date";
+import useSWR from "swr";
 
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
 import { Menu } from "@/components/menu";
-import { ReportList } from "@/components/report-list";
+import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import { Address, findAddress } from "@/utils/google-maps";
 import { ComplaintForm } from "@/components/complaint-form";
-import {
-  getFromSessionStorage,
-  saveToSessionStorage,
-  SessionData,
-} from "@/utils/session-storage";
 import { formatDate } from "@/utils/date";
+import { useTranslations } from "next-intl";
+import { fetchTasks } from "@/api/tasks";
+import { Report } from "@/types/report.types";
+import { Spinner } from "@heroui/spinner";
 
 export default function Home() {
+  const t = useTranslations("HomePage");
   const cameraRef = React.useRef<CameraType>(null);
   const [image, setImage] = React.useState<string | null>(null);
   const [deviceReady, setDeviceReady] = React.useState(false);
@@ -40,13 +41,28 @@ export default function Home() {
   const [isAddressLoaded, setIsAddressLoaded] = React.useState<boolean>(true);
   const [isCategoryLocked, setIsCategoryLocked] =
     React.useState<boolean>(false);
-  const [publicReports, setPublicReports] = React.useState<SessionData[]>([]);
 
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
 
+  const {
+    data: publicReports,
+    error: dataError,
+    isValidating,
+  } = useSWR<Report[]>(["reports"], fetchTasks as any, {
+    dedupingInterval: 60000,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
+
   React.useEffect(() => {
+    // const fetchPublicReports = async () => {
+    //   const { data } = await fetchTasks();
+
+    //   setPublicReports(data as Report[]);
+    // };
+
+    // fetchPublicReports();
     refreshLocation();
-    handleGetData();
   }, []);
 
   React.useEffect(() => {
@@ -77,20 +93,14 @@ export default function Home() {
           }
         },
         (err) => {
-          setError(`Gagal memuat lokasi: ${err.message}`);
+          setError(t("failed-to-load-error-text", { message: err.message }));
           setIsAddressLoaded(true);
         },
       );
     } else {
-      setError("GPS tidak terdeteksi.");
+      setError(t("gps-failed-error-text"));
       setIsAddressLoaded(true);
     }
-  };
-
-  const handleGetData = () => {
-    const storedData = getFromSessionStorage();
-
-    setPublicReports([...storedData].reverse());
   };
 
   const takePhoto = () => {
@@ -122,8 +132,8 @@ export default function Home() {
       date: formatDate(now(getLocalTimeZone()).toString()),
     };
 
-    saveToSessionStorage(enrichedData);
-    handleGetData();
+    // saveToSessionStorage(enrichedData);
+    // update state
   };
 
   return (
@@ -141,30 +151,25 @@ export default function Home() {
           {address
             ? `${address.adminArea3}`
             : error
-              ? `${error}`
-              : "Mual ulang lokasi"}
+              ? t(error)
+              : t("fetch-location-failed-error-text")}
         </Button>
       </Skeleton>
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
-        <ReportList>
-          {publicReports.length === 0 && <ReportList.Empty />}
-          {publicReports &&
-            publicReports.map(
-              (
-                { title, category, date, image }: SessionData,
-                index: number,
-              ) => (
-                <ReportList.Item
-                  key={index}
-                  category={category}
-                  date={date}
-                  image={image}
-                  isLast={index === publicReports.length - 1}
-                  title={title}
-                />
-              ),
-            )}
+        <ReportList
+          title={t("newest-reports-text")}
+          isEmpty={publicReports?.length === 0}
+        >
+          {isValidating && <Spinner />}
+          {!isValidating && publicReports?.length === 0 && (
+            <ReportList.Empty value={t("empty-text")} />
+          )}
+          {!isValidating &&
+            publicReports &&
+            publicReports.map((item: Report, index: number) => (
+              <ReportList.Item key={index} item={item} />
+            ))}
         </ReportList>
         <div className="flex gap-3">
           <Modal
@@ -201,7 +206,7 @@ export default function Home() {
                   {!isStep2 && (
                     <ModalFooter className="flex flex-row items-center justify-between">
                       <Button color="danger" variant="light" onPress={onClose}>
-                        Batal
+                        {t("create-report-cancel-text")}
                       </Button>
                       {!image && (
                         <Button
@@ -221,7 +226,7 @@ export default function Home() {
                           variant="light"
                           onPress={retakePhoto}
                         >
-                          Ulangi
+                          {t("create-report-redo-text")}
                         </Button>
                       )}
                       {!isStep2 && (
@@ -232,7 +237,7 @@ export default function Home() {
                           variant="light"
                           onPress={() => setIsStep2(true)}
                         >
-                          Lanjut
+                          {t("create-report-continue-text")}
                         </Button>
                       )}
                     </ModalFooter>
@@ -250,7 +255,7 @@ export default function Home() {
               variant="shadow"
               onPress={onOpen}
             >
-              Lapor Sekarang!
+              {t("create-report-cta-text")}
             </Button>
           </div>
         </div>

@@ -11,24 +11,6 @@ export const siteConfig = {
       href: "/about",
     },
   ],
-  navMenuItems: [
-    {
-      label: "Facebook ",
-      href: "https://www.facebook.com/wapresri.go.id",
-    },
-    {
-      label: "Instagram",
-      href: "https://www.instagram.com/setwapres.ri/",
-    },
-    {
-      label: "Youtube",
-      href: "https://www.youtube.com/@Setwapres",
-    },
-    {
-      label: "About",
-      href: "/about",
-    },
-  ],
   links: {
     website: "https://www.wapresri.go.id/",
     facebook: "https://www.facebook.com/wapresri.go.id",
