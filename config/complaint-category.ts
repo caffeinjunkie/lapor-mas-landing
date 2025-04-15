@@ -48,8 +48,18 @@ export const categories: CategoryProps[] = [
     label: "category-keamanan-text",
     addressRequired: true,
   },
-  { Icon: CoinIcon, key: "pungli", label: "category-pungli-text", addressRequired: true },
-  { Icon: OthersIcon, key: "lainnya", label: "category-lainnya-text", addressRequired: false },
+  {
+    Icon: CoinIcon,
+    key: "pungli",
+    label: "category-pungli-text",
+    addressRequired: true,
+  },
+  {
+    Icon: OthersIcon,
+    key: "lainnya",
+    label: "category-lainnya-text",
+    addressRequired: false,
+  },
 ];
 
 export type Category = {

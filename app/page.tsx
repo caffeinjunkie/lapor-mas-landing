@@ -13,6 +13,7 @@ import {
   useDisclosure,
 } from "@heroui/modal";
 import { getLocalTimeZone, now } from "@internationalized/date";
+import useSWR from "swr";
 
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/camera";
@@ -21,15 +22,11 @@ import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import { Address, findAddress } from "@/utils/google-maps";
 import { ComplaintForm } from "@/components/complaint-form";
-import {
-  getFromSessionStorage,
-  saveToSessionStorage,
-  SessionData,
-} from "@/utils/session-storage";
 import { formatDate } from "@/utils/date";
 import { useTranslations } from "next-intl";
 import { fetchTasks } from "@/api/tasks";
 import { Report } from "@/types/report.types";
+import { Spinner } from "@heroui/spinner";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -44,18 +41,27 @@ export default function Home() {
   const [isAddressLoaded, setIsAddressLoaded] = React.useState<boolean>(true);
   const [isCategoryLocked, setIsCategoryLocked] =
     React.useState<boolean>(false);
-  const [publicReports, setPublicReports] = React.useState<Report[]>([]);
-  
+
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
 
+  const {
+    data: publicReports,
+    error: dataError,
+    isValidating,
+  } = useSWR<Report[]>(["reports"], fetchTasks as any, {
+    dedupingInterval: 60000,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
+
   React.useEffect(() => {
-    const fetchPublicReports = async () => {
-      const { data } = await fetchTasks();
+    // const fetchPublicReports = async () => {
+    //   const { data } = await fetchTasks();
 
-      setPublicReports(data as Report[]);
-    };
+    //   setPublicReports(data as Report[]);
+    // };
 
-    fetchPublicReports();
+    // fetchPublicReports();
     refreshLocation();
   }, []);
 
@@ -128,7 +134,6 @@ export default function Home() {
 
     // saveToSessionStorage(enrichedData);
     // update state
-
   };
 
   return (
@@ -152,26 +157,19 @@ export default function Home() {
       </Skeleton>
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
-        <ReportList title={t("newest-reports-text")} isEmpty={publicReports.length === 0}>
-          {publicReports.length === 0 && (
+        <ReportList
+          title={t("newest-reports-text")}
+          isEmpty={publicReports?.length === 0}
+        >
+          {isValidating && <Spinner />}
+          {!isValidating && publicReports?.length === 0 && (
             <ReportList.Empty value={t("empty-text")} />
           )}
-          {publicReports &&
-            publicReports.map(
-              (
-                { title, category, created_at, images }: Report,
-                index: number,
-              ) => (
-                <ReportList.Item
-                  key={index}
-                  category={category}
-                  date={created_at}
-                  image={images?.[0]}
-                  isLast={index === publicReports.length - 1}
-                  title={title}
-                />
-              ),
-            )}
+          {!isValidating &&
+            publicReports &&
+            publicReports.map((item: Report, index: number) => (
+              <ReportList.Item key={index} item={item} />
+            ))}
         </ReportList>
         <div className="flex gap-3">
           <Modal

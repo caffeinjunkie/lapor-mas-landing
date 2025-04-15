@@ -2,7 +2,7 @@
   "HomePage": {
     "title": "Lapor Mas Wapres",
     "fetch-location-failed-error-text": "Muat ulang lokasi",
-    "newest-reports-text": "Kasus Terbaru",
+    "newest-reports-text": "Laporan Terbaru",
     "empty-text": "Tidak ada laporan",
     "category-kebijakan-publik-text": "Kebijakan Publik",
     "category-kondisi-jalan-text": "Kondisi Jalan",
@@ -17,7 +17,11 @@
     "create-report-cancel-text": "Batal",
     "create-report-redo-text": "Ulangi",
     "failed-to-load-error-text": "Gagal memuat lokasi: {message}",
-    "gps-failed-error-text": "GPS tidak terdeteksi."
+    "gps-failed-error-text": "GPS tidak terdeteksi.",
+    "priority-mid": "Prioritas Sedang",
+    "priority-high": "Prioritas Tinggi",
+    "priority-critical": "Prioritas Kritis",
+    "priority-low": "Prioritas Rendah"
   },
   "Navbar": {
     "check-report-text": "Cek laporan mu disini!"

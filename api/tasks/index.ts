@@ -18,8 +18,9 @@ export const fetchTasks = async () => {
     .order("created_at", { ascending: false })
     .eq("status", "PENDING");
 
+  if (error) throw error;
 
-  return { data, count, error };
+  return data;
 };
 
 export const fetchTaskByTrackingId = async (trackingId: string) => {

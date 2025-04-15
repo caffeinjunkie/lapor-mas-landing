@@ -1,46 +1,66 @@
-import { Card } from "@heroui/card";
+import { Card, CardBody } from "@heroui/card";
 
-import { categories } from "@/config/complaint-category";
 import { formatLocaleDate } from "@/utils/date/index";
-
+import { Report } from "@/types/report.types";
+import { Chip } from "@heroui/chip";
+import { useTranslations } from "next-intl";
+import { PriorityChipColor, PriorityLabel } from "@/config/report";
+import clsx from "clsx";
 
 type ItemProps = {
-    title: string;
-    category: string;
-    date: string;
-    image?: string;
-    isLast: boolean;
-  };
+  item: Report;
+};
 
-export const Item = ({ title, category, date, isLast, image }: ItemProps) => {
-  const Icon = categories.filter(({ key }) => key === category)[0].Icon;
+export const Item = ({ item }: ItemProps) => {
+  const t = useTranslations("HomePage");
+  const hasAddress =
+    item.address !== null &&
+    (item.address?.district !== "-" || item.address?.district !== null);
 
   return (
-    <Card
-      className={`flex items-center flex-row gap-3 w-full p-4`}
-    >
-      <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-400/20 rounded-md overflow-hidden flex items-center justify-center">
-        {!image && <Icon size={48} />}
-        {image && (
-          <img
-            alt={title}
-            className="object-cover w-16 h-16 md:w-20 md:h-20"
-            src={image}
-          />
-        )}
-      </div>
-      <div className="flex flex-1 flex-col w-24 overflow-hidden">
-        <p className="text-[10px] md:text-xs">{category}</p>
-        <p
-          className="text-sm font-semibold pt-1 pb-2.5 md:pb-3
-          whitespace-nowrap overflow-hidden text-ellipsis"
-        >
-          {title}
-        </p>
-        <div className="flex flex-row justify-end items-center w-full">
-          <p className="text-xs font-light">{formatLocaleDate(date)}</p>
+    <Card>
+      <CardBody>
+        <div className="flex flex-row gap-2">
+          <div className="flex flex-col w-full gap-1 justify-between">
+            <div className="flex flex-row items-center gap-1 text-sm">
+              <Chip
+                color={
+                  PriorityChipColor[
+                    item.priority as keyof typeof PriorityChipColor
+                  ]
+                }
+                size="sm"
+                classNames={{
+                  content: "font-semibold",
+                }}
+                variant="flat"
+                radius="full"
+                className={clsx("text-center")}
+              >
+                {t(PriorityLabel[item.priority as keyof typeof PriorityLabel])}
+              </Chip>
+              <Chip
+                color="default"
+                size="sm"
+                classNames={{
+                  content: "font-semibold",
+                }}
+                variant="solid"
+                radius="full"
+                className={clsx("text-center")}
+              >
+                {t(`category-${item.category}-text`)}
+              </Chip>
+            </div>
+            <p className="text-base font-semibold line-clamp-1">{item.title}</p>
+            <div className="flex flex-row justify-end items-center gap-1 pt-0.5 text-default-500 text-xs">
+              {hasAddress && <p>{item.address?.district}</p>}
+              {hasAddress && <span className="text-default-500">|</span>}
+              <p>{formatLocaleDate(item.created_at)}</p>
+            </div>
+          </div>
         </div>
-      </div>
+      </CardBody>
     </Card>
   );
 };
