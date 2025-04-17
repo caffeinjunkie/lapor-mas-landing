@@ -35,7 +35,6 @@ export const ComplaintForm = ({
       validationBehavior="native"
       onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
         onSubmit(e);
-        onClose();
       }}
     >
       <Input

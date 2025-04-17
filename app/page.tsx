@@ -1,8 +1,15 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { CameraType } from "react-camera-pro";
 import { Button } from "@heroui/button";
+import { DotLottie, DotLottieReact } from "@lottiefiles/dotlottie-react";
 import {
   Modal,
   ModalContent,
@@ -26,6 +33,8 @@ import { fetchTasks } from "@/api/tasks";
 import { Report } from "@/types/report.types";
 import { Spinner } from "@heroui/spinner";
 import { UploadForm } from "@/components/form/upload-form";
+import { getUserPrompt } from "@/utils/prompts";
+import useApi from "@/hooks/use-api";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -40,13 +49,19 @@ export default function Home() {
   );
   const [isStep2, setIsStep2] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<string>("upload-form");
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const [address, setAddress] = useState<Address | null>(null);
   const [isAddressLoaded, setIsAddressLoaded] = useState<boolean>(true);
   const [isCategoryLocked, setIsCategoryLocked] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
-
   const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
+  const {
+    data: aiResponse,
+    error: aiError,
+    loading: aiLoading,
+    fetchData: fetchAiData,
+  } = useApi();
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   const {
     data: publicReports,
@@ -69,7 +84,7 @@ export default function Home() {
     refreshLocation();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) {
       setImage(null);
       setDeviceReady(false);
@@ -78,6 +93,12 @@ export default function Home() {
       setIsCategoryLocked(false);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (aiResponse) {
+      console.log(aiResponse, "resp");
+    }
+  }, [aiResponse]);
 
   const refreshLocation = () => {
     setIsAddressLoaded(false);
@@ -91,18 +112,18 @@ export default function Home() {
               setAddress(address);
             }
           } catch (err: any) {
-            setError(err.message);
+            // setError(err.message);
           } finally {
             setIsAddressLoaded(true);
           }
         },
         (err) => {
-          setError(t("failed-to-load-error-text", { message: err.message }));
+          // setError(t("failed-to-load-error-text", { message: err.message }));
           setIsAddressLoaded(true);
         },
       );
     } else {
-      setError(t("gps-failed-error-text"));
+      // setError(t("gps-failed-error-text"));
       setIsAddressLoaded(true);
     }
   };
@@ -122,16 +143,29 @@ export default function Home() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
-    const enrichedData: any = {
-      ...dataFromEntries,
-      image,
-      category: selectedCategory?.label,
-      date: formatDate(now(getLocalTimeZone()).toString()),
-    };
+    // const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
+    // const enrichedData: any = {
+    //   ...dataFromEntries,
+    //   image,
+    //   category: selectedCategory?.label,
+    //   date: formatDate(now(getLocalTimeZone()).toString()),
+    // };
 
     // saveToSessionStorage(enrichedData);
     // update state
+  };
+
+  const onOpenAICheck = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
+    const submitValue = getUserPrompt(
+      dataFromEntries.title as string,
+      dataFromEntries.description as string,
+      dataFromEntries.category as string,
+      dataFromEntries.address as string,
+    );
+    setCurrentStep("ai-checker");
+    await fetchAiData(submitValue);
   };
 
   const handleConfirmPhoto = (file: File) => {
@@ -198,8 +232,8 @@ export default function Home() {
                   <ModalHeader className="flex flex-col items-center gap-1">
                     {t(`complaint-form-${currentStep}-title`)}
                   </ModalHeader>
-                  <ModalBody className="gap-4">
-                    {currentStep === "upload-form" && (
+                  <ModalBody className="gap-4 w-full flex flex-col justify-center items-center">
+                    {(currentStep === "upload-form" && !aiLoading) && (
                       <UploadForm
                         onClose={onClose}
                         files={files}
@@ -212,7 +246,7 @@ export default function Home() {
                         onNext={() => setCurrentStep("info-form")}
                       />
                     )}
-                    {currentStep === "info-form" && (
+                    {(currentStep === "info-form" && !aiLoading) && (
                       <ComplaintForm
                         address={address}
                         category={selectedCategory}
@@ -220,49 +254,24 @@ export default function Home() {
                         setCategory={setSelectedCategory}
                         onClose={onClose}
                         files={files}
-                        onSubmit={handleSubmit}
+                        onSubmit={onOpenAICheck}
                       />
                     )}
+                    {(currentStep === "ai-checker" && aiLoading) && (
+                      <DotLottieReact
+                        autoplay
+                        loop
+                        speed={1}
+                        className="d-lg-block d-md-block w-72 pb-8"
+                        src="https://lottie.host/70f16a77-a19f-4ee6-8ce2-91de5e929c0d/aG88OC2gU9.lottie"
+                      />
+                    )}
+                    {(currentStep === "ai-checker" && !aiLoading) && (
+                      <div className="flex flex-col items-center gap-4">
+                        result
+                      </div>
+                    )}
                   </ModalBody>
-                  {/* {!isStep2 && (
-                    <ModalFooter className="flex flex-row items-center justify-between">
-                      <Button color="danger" variant="light" onPress={onClose}>
-                        {t("create-report-cancel-text")}
-                      </Button>
-                      {!image && (
-                        <Button
-                          isIconOnly
-                          color="danger"
-                          isDisabled={!deviceReady}
-                          radius="full"
-                          onPress={takePhoto}
-                        >
-                          <CameraIcon fill="white" />
-                        </Button>
-                      )}
-                      {image && (
-                        <Button
-                          color="default"
-                          startContent={<RefreshIcon />}
-                          variant="light"
-                          onPress={retakePhoto}
-                        >
-                          {t("create-report-redo-text")}
-                        </Button>
-                      )}
-                      {!isStep2 && (
-                        <Button
-                          color="primary"
-                          isDisabled={!image}
-                          type="submit"
-                          variant="light"
-                          onPress={() => setIsStep2(true)}
-                        >
-                          {t("create-report-continue-text")}
-                        </Button>
-                      )}
-                    </ModalFooter>
-                  )} */}
                 </>
               )}
             </ModalContent>
