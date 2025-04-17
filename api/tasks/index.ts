@@ -10,10 +10,54 @@ export type FilterType = {
   value: string[] | string;
 };
 
+export type CreateTaskType = {
+  title: string;
+  description: string;
+  files: File[];
+  category: string;
+  followUpQuestions: string[];
+  address: string;
+  priority: string;
+};
+
+export const createTask = async ({
+  title,
+  description,
+  category,
+  followUpQuestions,
+  priority,
+  address,
+  files,
+}: CreateTaskType) => {
+
+  // upload images
+  const images = [] as string[];
+
+  // const { data, error } = await supabase
+  //   .from("tasks")
+  //   .insert({
+  //     title,
+  //     description,
+  //     category,
+  //     priority,
+  //     status: "PENDING",
+  //     tracking_id: "",
+  //     images,
+  //     data: {
+  //       follow_up_questions: followUpQuestions,
+  //     }
+  //   })
+  //   .single();
+
+  // if (error) throw error;
+
+  // return { data };
+};
+
 export const fetchTasks = async () => {
-  const { data, count, error } = await supabase
+  const { data, error } = await supabase
     .from("tasks")
-    .select("*", { count: "exact" })
+    .select("*")
     .range(0, 6)
     .order("created_at", { ascending: false })
     .eq("status", "PENDING");

@@ -1,15 +1,10 @@
 "use client";
 
 import React, {
-  Dispatch,
-  SetStateAction,
   useEffect,
-  useRef,
   useState,
 } from "react";
-import { CameraType } from "react-camera-pro";
 import { Button } from "@heroui/button";
-import { DotLottie, DotLottieReact } from "@lottiefiles/dotlottie-react";
 import {
   Modal,
   ModalContent,
@@ -20,48 +15,64 @@ import {
 import { getLocalTimeZone, now } from "@internationalized/date";
 import useSWR from "swr";
 
-import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
+import {
+  CameraIcon,
+  MapIcon,
+  RefreshIcon,
+} from "@/components/icons";
 import { Camera } from "@/components/form/camera";
 import { Menu } from "@/components/menu";
 import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import { Address, findAddress } from "@/utils/google-maps";
-import { ComplaintForm } from "@/components/form/complaint-form";
 import { formatDate } from "@/utils/date";
 import { useTranslations } from "next-intl";
 import { fetchTasks } from "@/api/tasks";
 import { Report } from "@/types/report.types";
 import { Spinner } from "@heroui/spinner";
-import { UploadForm } from "@/components/form/upload-form";
 import { getUserPrompt } from "@/utils/prompts";
 import useApi from "@/hooks/use-api";
+import {
+  deleteTemporaryData,
+  getTemporaryData,
+  saveTemporaryData,
+} from "./handlers";
+import { MandatoryModal } from "@/components/modals/mandatory-modal";
+import { AIModal } from "@/components/modals/ai-modal";
 
 export default function Home() {
   const t = useTranslations("HomePage");
-  const cameraRef = useRef({ current: null } as { current: CameraType | null });
-  const [image, setImage] = useState<string | null>(null);
   const [deviceReady, setDeviceReady] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const mandatorySteps = ["info-form", "upload-form"];
-  const optionalSteps = ["follow-up-form"];
+  const optionalSteps = ["ai-checking", "ai-checked", "follow-up-form"];
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
-  const [isStep2, setIsStep2] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<string>("upload-form");
   // const [error, setError] = useState<string | null>(null);
   const [address, setAddress] = useState<Address | null>(null);
   const [isAddressLoaded, setIsAddressLoaded] = useState<boolean>(true);
   const [isCategoryLocked, setIsCategoryLocked] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
-  const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isMandatoryModalOpen,
+    onOpenChange: onMandatoryModalOpenChange,
+    onOpen: onMandatoryModalOpen,
+    onClose: onMandatoryModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isAiModalOpen,
+    onOpenChange: onAiModalOpenChange,
+    onOpen: onAiModalOpen,
+    onClose: onAiModalClose,
+  } = useDisclosure();
   const {
     data: aiResponse,
     error: aiError,
     loading: aiLoading,
     fetchData: fetchAiData,
   } = useApi();
-  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   const {
     data: publicReports,
@@ -85,18 +96,29 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!isOpen) {
-      setImage(null);
+    if (!isMandatoryModalOpen) {
       setDeviceReady(false);
-      setIsStep2(false);
       setSelectedCategory(null);
       setIsCategoryLocked(false);
     }
-  }, [isOpen]);
+  }, [isMandatoryModalOpen]);
 
   useEffect(() => {
-    if (aiResponse) {
-      console.log(aiResponse, "resp");
+    if (aiResponse && !aiLoading) {
+      setCurrentStep("ai-checked");
+      const tempData = getTemporaryData();
+      saveTemporaryData({ ...tempData, priority: aiResponse.priority });
+
+      const isNonCritical = selectedCategory?.key === "lainnya";
+      const isReportValid =
+        (isNonCritical
+          ? (aiResponse?.validityScore ?? 0) >= 70
+          : (aiResponse?.validityScore ?? 0) >= 80) && !aiResponse.isSpam;
+      if (isReportValid) {
+        setTimeout(() => {
+          setCurrentStep("follow-up-form");
+        }, 1000);
+      }
     }
   }, [aiResponse]);
 
@@ -130,7 +152,7 @@ export default function Home() {
 
   const selectMenu = (category: Category) => {
     setSelectedCategory(category);
-    onOpen();
+    onMandatoryModalOpen();
     setIsCategoryLocked(true);
   };
 
@@ -141,18 +163,16 @@ export default function Home() {
     setIsCameraOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onReportSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
-    // const enrichedData: any = {
-    //   ...dataFromEntries,
-    //   image,
-    //   category: selectedCategory?.label,
-    //   date: formatDate(now(getLocalTimeZone()).toString()),
-    // };
-
-    // saveToSessionStorage(enrichedData);
-    // update state
+    const tempData = getTemporaryData();
+    const fuQnA = Object.fromEntries(new FormData(e.currentTarget));
+    const followUpQuestions = Object.entries(fuQnA)
+      .filter(([_, answer]) => answer !== "")
+      .map(([question, answer]) => ({
+        q: question,
+        a: answer
+      }));
   };
 
   const onOpenAICheck = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -164,13 +184,23 @@ export default function Home() {
       dataFromEntries.category as string,
       dataFromEntries.address as string,
     );
-    setCurrentStep("ai-checker");
+    onMandatoryModalClose();
+    onAiModalOpen();
+    setCurrentStep("ai-checking");
+    console.log(files, 'ax')
+    saveTemporaryData({ ...dataFromEntries });
     await fetchAiData(submitValue);
   };
 
   const handleConfirmPhoto = (file: File) => {
     setFiles([...files, file]);
     setIsCameraOpen(false);
+  };
+
+  const onAiModalBack = () => {
+    setCurrentStep("info-form");
+    onAiModalClose();
+    onMandatoryModalOpen();
   };
 
   const reset = () => {
@@ -216,66 +246,41 @@ export default function Home() {
             ))}
         </ReportList>
         <div className="flex gap-3">
-          <Modal
-            isDismissable={false}
-            isOpen={isOpen}
+          <MandatoryModal
+            isOpen={isMandatoryModalOpen}
             onClose={() => {
               reset();
-              onClose();
+              onMandatoryModalClose();
             }}
-            placement="bottom-center"
-            onOpenChange={onOpenChange}
-          >
-            <ModalContent className="transform transition-transform duration-200">
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col items-center gap-1">
-                    {t(`complaint-form-${currentStep}-title`)}
-                  </ModalHeader>
-                  <ModalBody className="gap-4 w-full flex flex-col justify-center items-center">
-                    {(currentStep === "upload-form" && !aiLoading) && (
-                      <UploadForm
-                        onClose={onClose}
-                        files={files}
-                        onCameraOpen={onCameraOpen}
-                        setFiles={
-                          setFiles as (
-                            files: File[],
-                          ) => Dispatch<SetStateAction<File[]>>
-                        }
-                        onNext={() => setCurrentStep("info-form")}
-                      />
-                    )}
-                    {(currentStep === "info-form" && !aiLoading) && (
-                      <ComplaintForm
-                        address={address}
-                        category={selectedCategory}
-                        isCategorySelectionLocked={isCategoryLocked}
-                        setCategory={setSelectedCategory}
-                        onClose={onClose}
-                        files={files}
-                        onSubmit={onOpenAICheck}
-                      />
-                    )}
-                    {(currentStep === "ai-checker" && aiLoading) && (
-                      <DotLottieReact
-                        autoplay
-                        loop
-                        speed={1}
-                        className="d-lg-block d-md-block w-72 pb-8"
-                        src="https://lottie.host/70f16a77-a19f-4ee6-8ce2-91de5e929c0d/aG88OC2gU9.lottie"
-                      />
-                    )}
-                    {(currentStep === "ai-checker" && !aiLoading) && (
-                      <div className="flex flex-col items-center gap-4">
-                        result
-                      </div>
-                    )}
-                  </ModalBody>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
+            onOpenChange={onMandatoryModalOpenChange}
+            t={t}
+            currentStep={currentStep}
+            onSubmit={onOpenAICheck}
+            address={address}
+            isCategoryLocked={isCategoryLocked}
+            setCurrentStep={setCurrentStep}
+            files={files}
+            setFiles={setFiles}
+            onCameraOpen={onCameraOpen}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
+          <AIModal
+            isOpen={isAiModalOpen}
+            onClose={() => {
+              reset();
+              deleteTemporaryData();
+              onAiModalClose();
+            }}
+            onOpenChange={onAiModalOpenChange}
+            t={t}
+            isNonCriticalType={selectedCategory?.key === "lainnya"}
+            aiResponse={aiResponse}
+            isLoading={aiLoading}
+            currentStep={currentStep}
+            onBack={onAiModalBack}
+            onSubmit={onReportSubmit}
+          />
           {isCameraOpen && (
             <Camera
               onClose={() => setIsCameraOpen(false)}
@@ -291,7 +296,7 @@ export default function Home() {
               size="lg"
               startContent={<CameraIcon />}
               variant="shadow"
-              onPress={onOpen}
+              onPress={onMandatoryModalOpen}
             >
               {t("create-report-cta-text")}
             </Button>

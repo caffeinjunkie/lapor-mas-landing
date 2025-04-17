@@ -24,8 +24,13 @@
     "priority-low": "Prioritas Rendah",
     "complaint-form-info-form-title": "Isi Informasi Utama Laporan",
     "complaint-form-upload-form-title": "Foto Kondisi Lapangan",
-    "complaint-form-ai-checker-title": "AI Checker",
-    "complaint-form-follow-up-form-title": "Isi Informasi Lanjutan"
+    "complaint-form-ai-checking-title": "AI Checker",
+    "complaint-form-ai-checking-subtitle": "Laporan anda sedang diperiksa oleh AI",
+    "complaint-form-ai-checked-title": "Hasil Pengecekan",
+    "complaint-form-follow-up-form-title": "Isi Informasi Lanjutan",
+    "ai-checker-spam-text": "Laporan terindikasi sebagai spam.",
+    "ai-checker-valid-text": "Laporan valid, tunggu beberapa saat lagi.",
+    "create-report-back-text": "Kembali"
   },
   "Navbar": {
     "check-report-text": "Cek laporan mu disini!"
@@ -58,5 +63,10 @@
     "continue-text": "Lanjut",
     "cancel-text": "Batal",
     "file-attached": "File terlampir ({count})"
+  },
+  "FollowUpForm": {
+    "submit-text": "Kirim",
+    "cancel-text": "Batal",
+    "answer-text": "Jawab"
   }
 }

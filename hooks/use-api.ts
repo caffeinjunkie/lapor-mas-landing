@@ -10,8 +10,7 @@ const useApi = () => {
     setLoading(true);
     try {
       const result = await openai(payload);
-      console.log(result, "use api");
-      setData(result);
+      setData(JSON.parse(result || "{}"));
       setError(null);
     } catch (error) {
       setError(error);

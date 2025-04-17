@@ -14,6 +14,8 @@ interface ComplaintFormProps {
   category: Category | null;
   setCategory: (category: Category) => void;
   onClose: () => void;
+  title: string;
+  description: string;
   files: File[];
   isCategorySelectionLocked: boolean;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -24,6 +26,8 @@ export const ComplaintForm = ({
   category,
   isCategorySelectionLocked,
   setCategory,
+  title,
+  description,
   files,
   onClose,
   onSubmit,
@@ -41,12 +45,14 @@ export const ComplaintForm = ({
         isRequired
         errorMessage={t("title-error-message")}
         label="Judul"
+        defaultValue={title}
         name="title"
         type="text"
       />
       <Textarea
         label="Deskripsi"
         name="description"
+        defaultValue={description}
         isRequired
         errorMessage={t("description-error-message")}
       />
