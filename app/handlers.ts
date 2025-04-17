@@ -1,11 +1,19 @@
 export const saveTemporaryData = (data: Record<string, any>) => {
-  localStorage.setItem("temporaryData", JSON.stringify(data));
+  sessionStorage.setItem("temporaryData", JSON.stringify(data));
 };
 
 export const deleteTemporaryData = () => {
-  localStorage.removeItem("temporaryData");
+  sessionStorage.removeItem("temporaryData");
 };
 
 export const getTemporaryData = () => {
-  return JSON.parse(localStorage.getItem("temporaryData") || "{}");
+  return JSON.parse(sessionStorage.getItem("temporaryData") || "{}");
+};
+
+export const saveCoordinates = (data: Record<string, any>) => {
+  sessionStorage.setItem("coordinates", JSON.stringify(data));
+};
+
+export const getCoordinates = () => {
+  return JSON.parse(sessionStorage.getItem("coordinates") || "{}");
 };

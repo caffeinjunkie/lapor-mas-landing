@@ -1,31 +1,15 @@
 "use client";
 
-import React, {
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@heroui/button";
-import {
-  Modal,
-  ModalContent,
-  ModalBody,
-  ModalHeader,
-  useDisclosure,
-} from "@heroui/modal";
-import { getLocalTimeZone, now } from "@internationalized/date";
+import { useDisclosure } from "@heroui/modal";
 import useSWR from "swr";
 
-import {
-  CameraIcon,
-  MapIcon,
-  RefreshIcon,
-} from "@/components/icons";
+import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Camera } from "@/components/form/camera";
 import { Menu } from "@/components/menu";
 import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
-import { Address, findAddress } from "@/utils/google-maps";
-import { formatDate } from "@/utils/date";
 import { useTranslations } from "next-intl";
 import { fetchTasks } from "@/api/tasks";
 import { Report } from "@/types/report.types";
@@ -34,25 +18,27 @@ import { getUserPrompt } from "@/utils/prompts";
 import useApi from "@/hooks/use-api";
 import {
   deleteTemporaryData,
+  getCoordinates,
   getTemporaryData,
+  saveCoordinates,
   saveTemporaryData,
 } from "./handlers";
 import { MandatoryModal } from "@/components/modals/mandatory-modal";
 import { AIModal } from "@/components/modals/ai-modal";
+import { Skeleton } from "@heroui/skeleton";
+import { fetchLocation } from "@/api/location";
 
 export default function Home() {
   const t = useTranslations("HomePage");
+  const coordinates = getCoordinates();
   const [deviceReady, setDeviceReady] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
-  const mandatorySteps = ["info-form", "upload-form"];
-  const optionalSteps = ["ai-checking", "ai-checked", "follow-up-form"];
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
   const [currentStep, setCurrentStep] = useState<string>("upload-form");
-  // const [error, setError] = useState<string | null>(null);
-  const [address, setAddress] = useState<Address | null>(null);
-  const [isAddressLoaded, setIsAddressLoaded] = useState<boolean>(true);
+  const [geoLocError, setGeoLocError] = useState<string | null>(null);
+  const [address, setAddress] = useState<Report["address"] | null>(null);
   const [isCategoryLocked, setIsCategoryLocked] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const {
@@ -77,22 +63,55 @@ export default function Home() {
   const {
     data: publicReports,
     error: dataError,
-    isValidating,
+    isValidating: isReportsLoading,
   } = useSWR<Report[]>(["reports"], fetchTasks as any, {
     dedupingInterval: 60000,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   });
 
-  React.useEffect(() => {
-    // const fetchPublicReports = async () => {
-    //   const { data } = await fetchTasks();
+  const {
+    data: mapData,
+    error: mapError,
+    isValidating: isMapLoading,
+    mutate: mutateMap,
+  } = useSWR(
+    coordinates?.lat && coordinates?.lng
+      ? ["map", coordinates.lat, coordinates.lng]
+      : null,
+    ([_, lat, lng]) => fetchLocation(lat, lng),
+    {
+      dedupingInterval: 60000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      onErrorRetry: (_, __, ___, revalidate, { retryCount }) => {
+        if (retryCount >= 3) return;
+        setTimeout(() => revalidate({ retryCount }), 1000);
+      },
+    },
+  );
 
-    //   setPublicReports(data as Report[]);
-    // };
+  const setLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords: { latitude, longitude } }) => {
+          saveCoordinates({
+            lat: latitude.toString(),
+            lng: longitude.toString(),
+          });
+          mutateMap();
+        },
+        (err) => {
+          err && setGeoLocError(t("missing-coordinates-error-text"));
+        },
+      );
+    }
+  };
 
-    // fetchPublicReports();
-    refreshLocation();
+  useEffect(() => {
+    const savedCoordinates = getCoordinates();
+    if (savedCoordinates) return;
+    setLocation();
   }, []);
 
   useEffect(() => {
@@ -122,37 +141,9 @@ export default function Home() {
     }
   }, [aiResponse]);
 
-  const refreshLocation = () => {
-    setIsAddressLoaded(false);
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async ({ coords: { latitude, longitude } }) => {
-          try {
-            const address = await findAddress(latitude, longitude);
-
-            if (address) {
-              setAddress(address);
-            }
-          } catch (err: any) {
-            // setError(err.message);
-          } finally {
-            setIsAddressLoaded(true);
-          }
-        },
-        (err) => {
-          // setError(t("failed-to-load-error-text", { message: err.message }));
-          setIsAddressLoaded(true);
-        },
-      );
-    } else {
-      // setError(t("gps-failed-error-text"));
-      setIsAddressLoaded(true);
-    }
-  };
-
   const selectMenu = (category: Category) => {
     setSelectedCategory(category);
-    onMandatoryModalOpen();
+    onReportCollectingStart();
     setIsCategoryLocked(true);
   };
 
@@ -171,7 +162,7 @@ export default function Home() {
       .filter(([_, answer]) => answer !== "")
       .map(([question, answer]) => ({
         q: question,
-        a: answer
+        a: answer,
       }));
   };
 
@@ -187,7 +178,6 @@ export default function Home() {
     onMandatoryModalClose();
     onAiModalOpen();
     setCurrentStep("ai-checking");
-    console.log(files, 'ax')
     saveTemporaryData({ ...dataFromEntries });
     await fetchAiData(submitValue);
   };
@@ -210,36 +200,53 @@ export default function Home() {
     setFiles([]);
   };
 
+  const onReportCollectingStart = () => {
+    onMandatoryModalOpen();
+    const fullAddress = `${mapData?.data?.village}, ${mapData?.data?.district}, ${mapData?.data?.regency}, ${mapData?.data?.province}, ${mapData?.data?.code}`;
+    const isFullAddressValid = !fullAddress.includes("undefined");
+    setAddress({
+      full_address: isFullAddressValid ? fullAddress : "",
+      village: mapData?.data?.village || "",
+      district: mapData?.data?.district || "",
+      lat: mapData?.data?.lat || "",
+      lng: mapData?.data?.lng || "",
+    });
+  };
+
   return (
     <section className="flex flex-col items-center pt-2 min-h-72">
-      {/* <Skeleton
+      <Skeleton
         className="rounded-lg"
-        isLoaded={isAddressLoaded && (address !== null || error !== null)}
+        isLoaded={
+          !isMapLoading &&
+          (mapData?.data !== null || mapError !== null || geoLocError !== null)
+        }
       >
         <Button
-          color={address ? "default" : "warning"}
-          startContent={address ? <MapIcon /> : <RefreshIcon />}
+          color={mapData?.data ? "default" : "warning"}
+          startContent={mapData?.data ? <MapIcon /> : <RefreshIcon />}
           variant="light"
-          onPress={refreshLocation}
+          onPress={setLocation}
         >
-          {address
-            ? `${address.adminArea3}`
-            : error
-              ? t(error)
-              : t("fetch-location-failed-error-text")}
+          {mapData?.data
+            ? `${mapData.data.village}`
+            : mapError || geoLocError
+              ? t(mapError?.message || geoLocError)
+              : t("fetch-location-refresh-text")}
         </Button>
-      </Skeleton> */}
+      </Skeleton>
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
         <ReportList
           title={t("newest-reports-text")}
-          isEmpty={isValidating || publicReports?.length === 0}
+          isEmpty={isReportsLoading || publicReports?.length === 0}
+          isError={dataError}
         >
-          {isValidating && <Spinner />}
-          {!isValidating && publicReports?.length === 0 && (
+          {isReportsLoading && <Spinner />}
+          {!isReportsLoading && publicReports?.length === 0 && (
             <ReportList.Empty value={t("empty-text")} />
           )}
-          {!isValidating &&
+          {!isReportsLoading &&
             publicReports &&
             publicReports.map((item: Report, index: number) => (
               <ReportList.Item key={index} item={item} />
@@ -274,6 +281,7 @@ export default function Home() {
             }}
             onOpenChange={onAiModalOpenChange}
             t={t}
+            isError={aiError}
             isNonCriticalType={selectedCategory?.key === "lainnya"}
             aiResponse={aiResponse}
             isLoading={aiLoading}
@@ -296,7 +304,7 @@ export default function Home() {
               size="lg"
               startContent={<CameraIcon />}
               variant="shadow"
-              onPress={onMandatoryModalOpen}
+              onPress={onReportCollectingStart}
             >
               {t("create-report-cta-text")}
             </Button>

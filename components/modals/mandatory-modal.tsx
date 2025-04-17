@@ -3,8 +3,8 @@ import { UploadForm } from "../form/upload-form";
 import { Dispatch, SetStateAction } from "react";
 import { ComplaintForm } from "../form/complaint-form";
 import { getTemporaryData } from "@/app/handlers";
-import { Address } from "@/utils/google-maps";
 import { Category } from "@/config/complaint-category";
+import { Report } from "@/types/report.types";
 
 interface MandatoryModalProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ interface MandatoryModalProps {
   t: (key: string) => string;
   currentStep: string;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  address: Address | null;
+  address: Report["address"] | null;
   isCategoryLocked: boolean;
   setCurrentStep: (step: string) => void;
   files: File[];

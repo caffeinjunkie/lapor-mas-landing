@@ -1,7 +1,8 @@
 {
   "HomePage": {
     "title": "Lapor Mas Wapres",
-    "fetch-location-failed-error-text": "Muat ulang lokasi",
+    "fetch-location-refresh-text": "Muat ulang lokasi",
+    "failed-to-fetch-location": "Gagal memuat lokasi. Mohon coba sesaat lagi.",
     "newest-reports-text": "Laporan Terbaru",
     "empty-text": "Tidak ada laporan",
     "category-kebijakan-publik-text": "Kebijakan Publik",
@@ -16,7 +17,7 @@
     "create-report-continue-text": "Lanjut",
     "create-report-cancel-text": "Batal",
     "create-report-redo-text": "Ulangi",
-    "failed-to-load-error-text": "Gagal memuat lokasi: {message}",
+    "missing-coordinates-error-text": "Koordinat tidak ditemukan. Mohon coba sesaat lagi.",
     "gps-failed-error-text": "GPS tidak terdeteksi.",
     "priority-mid": "Prioritas Sedang",
     "priority-high": "Prioritas Tinggi",
@@ -30,7 +31,9 @@
     "complaint-form-follow-up-form-title": "Isi Informasi Lanjutan",
     "ai-checker-spam-text": "Laporan terindikasi sebagai spam.",
     "ai-checker-valid-text": "Laporan valid, tunggu beberapa saat lagi.",
-    "create-report-back-text": "Kembali"
+    "create-report-back-text": "Kembali",
+    "fetch-report-error-text": "Terjadi kesalahan saat memuat daftar laporan.",
+    "open-ai-error-text": "Terjadi kesalahan teknis. Mohon coba sesaat lagi."
   },
   "Navbar": {
     "check-report-text": "Cek laporan mu disini!"
@@ -62,7 +65,11 @@
     "description-error-message": "Deskripsi laporan tidak boleh kosong",
     "continue-text": "Lanjut",
     "cancel-text": "Batal",
-    "file-attached": "File terlampir ({count})"
+    "file-attached": "File terlampir ({count})",
+    "title-input-text": "Judul Laporan",
+    "description-textarea-text": "Deskripsi Laporan",
+    "category-select-text": "Kategori Laporan",
+    "address-input-text": "Lokasi Kejadian"
   },
   "FollowUpForm": {
     "submit-text": "Kirim",

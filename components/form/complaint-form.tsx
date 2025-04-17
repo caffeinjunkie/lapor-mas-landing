@@ -6,11 +6,11 @@ import { Button } from "@heroui/button";
 
 import { categories, Category } from "@/config/complaint-category";
 import { FileIcon } from "@/components/icons";
-import { Address } from "@/utils/google-maps";
 import { useTranslations } from "next-intl";
+import { Report } from "@/types/report.types";
 
 interface ComplaintFormProps {
-  address: Address | null;
+  address: Report["address"] | null;
   category: Category | null;
   setCategory: (category: Category) => void;
   onClose: () => void;
@@ -44,13 +44,13 @@ export const ComplaintForm = ({
       <Input
         isRequired
         errorMessage={t("title-error-message")}
-        label="Judul"
+        label={t("title-input-text")}
         defaultValue={title}
         name="title"
         type="text"
       />
       <Textarea
-        label="Deskripsi"
+        label={t("description-textarea-text")}
         name="description"
         defaultValue={description}
         isRequired
@@ -60,7 +60,7 @@ export const ComplaintForm = ({
         isRequired
         defaultSelectedKeys={[category?.key || ""]}
         isDisabled={isCategorySelectionLocked}
-        label="Kategori Laporan"
+        label={t("category-select-text")}
         name="category"
         placeholder={category ? category?.key : ""}
         errorMessage={t("select-category-error-message")}
@@ -81,9 +81,9 @@ export const ComplaintForm = ({
       {category?.addressRequired && (
         <Input
           isRequired
-          defaultValue={address?.formattedAddress ?? ""}
+          defaultValue={address?.full_address ?? ""}
           errorMessage={t("address-error-message")}
-          label="Alamat"
+          label={t("address-input-text")}
           name="address"
           type="text"
         />

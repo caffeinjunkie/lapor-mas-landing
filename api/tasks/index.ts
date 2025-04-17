@@ -29,7 +29,6 @@ export const createTask = async ({
   address,
   files,
 }: CreateTaskType) => {
-
   // upload images
   const images = [] as string[];
 

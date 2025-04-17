@@ -13,6 +13,7 @@ interface AIModalProps {
   aiResponse: AIResponseType;
   isLoading: boolean;
   currentStep: string;
+  isError: boolean;
   onBack: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -26,6 +27,7 @@ export const AIModal = ({
   aiResponse,
   isLoading,
   currentStep,
+  isError,
   onBack,
   onSubmit,
 }: AIModalProps) => {
@@ -56,6 +58,11 @@ export const AIModal = ({
               {t(`complaint-form-${currentStep}-title`)}
             </ModalHeader>
             <ModalBody className="gap-4 w-full pb-4 flex flex-col justify-center items-center">
+              {!isLoading && isError && (
+                <p className="text-danger text-sm w-full text-center">
+                  {t("open-ai-error-text")}
+                </p>
+              )}
               {currentStep === "ai-checking" && isLoading && (
                 <>
                   <DotLottieReact
