@@ -35,12 +35,13 @@ export const AIModal = ({
     (isNonCriticalType
       ? (aiResponse?.validityScore ?? 0) >= 70
       : (aiResponse?.validityScore ?? 0) >= 80) && !aiResponse.isSpam;
+
   const message =
     aiResponse?.isSpam || false
       ? t("ai-checker-spam-text")
       : isReportValid
         ? t("ai-checker-valid-text")
-        : aiResponse?.validityScoreReason || "";
+        : aiResponse?.validationScoreReason;
 
   return (
     <Modal

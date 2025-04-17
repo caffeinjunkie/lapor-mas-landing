@@ -20,6 +20,7 @@ import {
   deleteTemporaryData,
   getCoordinates,
   getTemporaryData,
+  handleCreateTask,
   saveCoordinates,
   saveTemporaryData,
 } from "./handlers";
@@ -64,6 +65,7 @@ export default function Home() {
     data: publicReports,
     error: dataError,
     isValidating: isReportsLoading,
+    mutate: mutateReports,
   } = useSWR<Report[]>(["reports"], fetchTasks as any, {
     dedupingInterval: 60000,
     revalidateOnFocus: false,
@@ -162,8 +164,23 @@ export default function Home() {
       .filter(([_, answer]) => answer !== "")
       .map(([question, answer]) => ({
         q: question,
-        a: answer,
+        a: answer.toString(),
       }));
+
+    const coordinates = getCoordinates();
+
+    const payload = {
+      ...tempData,
+      address: {
+        full_address: address?.full_address,
+        village: address?.village,
+        district: address?.district,
+        lat: coordinates?.lat,
+        lng: coordinates?.lng,
+      },
+    };
+
+    handleCreateTask(payload, followUpQuestions, files, mutateReports, onAiModalClose);
   };
 
   const onOpenAICheck = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -171,14 +188,25 @@ export default function Home() {
     const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
     const submitValue = getUserPrompt(
       dataFromEntries.title as string,
-      dataFromEntries.description as string,
+      (dataFromEntries.description as string) ||
+        (selectedCategory?.key as string),
       dataFromEntries.category as string,
       dataFromEntries.address as string,
     );
     onMandatoryModalClose();
     onAiModalOpen();
     setCurrentStep("ai-checking");
-    saveTemporaryData({ ...dataFromEntries });
+    saveTemporaryData({
+      ...dataFromEntries,
+      category: selectedCategory?.key as string,
+      address: {
+        full_address: dataFromEntries.address,
+        village: mapData?.village,
+        district: mapData?.district,
+        lat: mapData?.lat,
+        lng: mapData?.lng,
+      },
+    });
     await fetchAiData(submitValue);
   };
 
