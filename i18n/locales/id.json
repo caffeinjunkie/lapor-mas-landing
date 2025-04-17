@@ -35,7 +35,11 @@
     "file-size-error-message": "Ukuran file terlalu besar. Pastikan ukuran file kurang dari 1MB.",
     "upload-form-subtitle": "Anda dapat mengunggah maksimal 3 foto",
     "continue-text": "Lanjut",
-    "cancel-text": "Batal"
+    "cancel-text": "Batal",
+    "camera-not-accessible": "Kamera tidak dapat diakses.",
+    "camera-permission-denied": "Mohon muat ulang dan beri izin menggunakan kamera.",
+    "camera-switch-camera": "Tidak dapat mengganti kamera.",
+    "camera-canvas-error": "Terjadi Kesalahan."
   },
   "ComplaintForm": {
     "category-kebijakan-publik-text": "Kebijakan Publik",
@@ -51,6 +55,7 @@
     "title-error-message": "Judul laporan tidak boleh kosong",
     "description-error-message": "Deskripsi laporan tidak boleh kosong",
     "continue-text": "Lanjut",
-    "cancel-text": "Batal"
+    "cancel-text": "Batal",
+    "file-attached": "File terlampir ({count})"
   }
 }

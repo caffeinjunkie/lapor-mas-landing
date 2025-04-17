@@ -3,12 +3,10 @@
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { CameraType } from "react-camera-pro";
 import { Button } from "@heroui/button";
-import { Skeleton } from "@heroui/skeleton";
 import {
   Modal,
   ModalContent,
   ModalBody,
-  ModalFooter,
   ModalHeader,
   useDisclosure,
 } from "@heroui/modal";
@@ -31,9 +29,10 @@ import { UploadForm } from "@/components/form/upload-form";
 
 export default function Home() {
   const t = useTranslations("HomePage");
-  const cameraRef = useRef<CameraType>(null);
+  const cameraRef = useRef({ current: null } as { current: CameraType | null });
   const [image, setImage] = useState<string | null>(null);
   const [deviceReady, setDeviceReady] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const mandatorySteps = ["info-form", "upload-form"];
   const optionalSteps = ["follow-up-form"];
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
@@ -108,23 +107,17 @@ export default function Home() {
     }
   };
 
-  const takePhoto = () => {
-    if (cameraRef.current) {
-      const photo = cameraRef.current.takePhoto();
-
-      setImage(photo as string);
-    }
-  };
-
-  const retakePhoto = () => {
-    setImage(null);
-    setIsStep2(false);
-  };
-
   const selectMenu = (category: Category) => {
     setSelectedCategory(category);
     onOpen();
     setIsCategoryLocked(true);
+  };
+
+  const onCameraOpen = () => {
+    if (files.length > 2) {
+      return;
+    }
+    setIsCameraOpen(true);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -141,9 +134,21 @@ export default function Home() {
     // update state
   };
 
+  const handleConfirmPhoto = (file: File) => {
+    setFiles([...files, file]);
+    setIsCameraOpen(false);
+  };
+
+  const reset = () => {
+    setDeviceReady(false);
+    setIsCameraOpen(false);
+    setCurrentStep("upload-form");
+    setFiles([]);
+  };
+
   return (
     <section className="flex flex-col items-center pt-2 min-h-72">
-      <Skeleton
+      {/* <Skeleton
         className="rounded-lg"
         isLoaded={isAddressLoaded && (address !== null || error !== null)}
       >
@@ -159,7 +164,7 @@ export default function Home() {
               ? t(error)
               : t("fetch-location-failed-error-text")}
         </Button>
-      </Skeleton>
+      </Skeleton> */}
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
         <ReportList
@@ -178,10 +183,10 @@ export default function Home() {
         </ReportList>
         <div className="flex gap-3">
           <Modal
+            isDismissable={false}
             isOpen={isOpen}
             onClose={() => {
-              setCurrentStep("upload-form");
-              setFiles([]);
+              reset();
               onClose();
             }}
             placement="bottom-center"
@@ -194,18 +199,11 @@ export default function Home() {
                     {t(`complaint-form-${currentStep}-title`)}
                   </ModalHeader>
                   <ModalBody className="gap-4">
-                    {/* {!isStep2 && (
-                      <Camera
-                        ref={cameraRef}
-                        deviceReady={deviceReady}
-                        image={image}
-                        setDeviceReady={setDeviceReady}
-                      />
-                    )} */}
                     {currentStep === "upload-form" && (
                       <UploadForm
                         onClose={onClose}
                         files={files}
+                        onCameraOpen={onCameraOpen}
                         setFiles={
                           setFiles as (
                             files: File[],
@@ -221,6 +219,7 @@ export default function Home() {
                         isCategorySelectionLocked={isCategoryLocked}
                         setCategory={setSelectedCategory}
                         onClose={onClose}
+                        files={files}
                         onSubmit={handleSubmit}
                       />
                     )}
@@ -268,6 +267,14 @@ export default function Home() {
               )}
             </ModalContent>
           </Modal>
+          {isCameraOpen && (
+            <Camera
+              onClose={() => setIsCameraOpen(false)}
+              deviceReady={deviceReady}
+              onConfirm={handleConfirmPhoto}
+              setDeviceReady={setDeviceReady}
+            />
+          )}
           <div className="w-full fixed flex justify-center bottom-0 pt-4 pb-10 left-0">
             <Button
               color="primary"

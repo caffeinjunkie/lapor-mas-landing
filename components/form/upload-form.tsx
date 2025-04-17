@@ -4,32 +4,24 @@ import { useTranslations } from "use-intl";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
+import { checkError } from "@/utils/image";
 
 export const UploadForm = ({
   onNext,
   onClose,
   files,
+  onCameraOpen,
   setFiles,
 }: {
   onNext: () => void;
   onClose: () => void;
+  onCameraOpen: () => void;
   files: File[];
   setFiles: (files: File[]) => Dispatch<SetStateAction<File[]>>;
 }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const t = useTranslations("UploadForm");
-
-  const checkError = (files: File[]) => {
-    const hasErrors = files.map((file) => {
-      if (file.size > 1000000) {
-        return true;
-      }
-      return false;
-    });
-
-    return hasErrors.some((hasError) => hasError);
-  };
 
   const onSelectFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileError(null);
@@ -73,6 +65,7 @@ export const UploadForm = ({
         <Card
           className="w-full bg-white/10"
           isPressable
+          onPress={onCameraOpen}
           isDisabled={files.length > 2}
         >
           <CardBody className="flex flex-col items-center gap-2">
@@ -84,7 +77,7 @@ export const UploadForm = ({
       <div className="flex flex-wrap gap-2 items-center w-full pb-2">
         {files.map((file, index) => (
           <Chip onClose={() => onDeleteFile(index)} key={index}>
-            {file.name}
+            {file.name.length > 30 ? `${file.name.slice(0, 30)}...` : file.name}
           </Chip>
         ))}
       </div>

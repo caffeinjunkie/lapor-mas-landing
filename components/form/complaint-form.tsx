@@ -14,6 +14,7 @@ interface ComplaintFormProps {
   category: Category | null;
   setCategory: (category: Category) => void;
   onClose: () => void;
+  files: File[];
   isCategorySelectionLocked: boolean;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -23,6 +24,7 @@ export const ComplaintForm = ({
   category,
   isCategorySelectionLocked,
   setCategory,
+  files,
   onClose,
   onSubmit,
 }: ComplaintFormProps) => {
@@ -51,10 +53,11 @@ export const ComplaintForm = ({
       />
       <Select
         isRequired
-        defaultSelectedKeys={[category?.label || ""]}
+        defaultSelectedKeys={[category?.key || ""]}
         isDisabled={isCategorySelectionLocked}
         label="Kategori Laporan"
         name="category"
+        placeholder={category ? category?.key : ""}
         errorMessage={t("select-category-error-message")}
         onChange={(event) => {
           setCategory({
@@ -82,14 +85,16 @@ export const ComplaintForm = ({
       )}
       <div className="flex flex-row py-4 items-center justify-center gap-1 w-full">
         <FileIcon />
-        <p className="text-small font-medium">File terlampir</p>
+        <p className="text-small font-medium">
+          {t("file-attached", { count: files.length })}
+        </p>
       </div>
       <div className="flex w-full justify-between pb-2">
         <Button color="danger" variant="light" onPress={onClose}>
-          {t("create-report-cancel-text")}
+          {t("cancel-text")}
         </Button>
         <Button color="primary" type="submit">
-          {t("create-report-continue-text")}
+          {t("continue-text")}
         </Button>
       </div>
     </Form>
