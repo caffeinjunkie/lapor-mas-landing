@@ -69,7 +69,7 @@ export const Camera = ({
             }}
           />
         )}
-        {image && <img src={image} alt="image" className="w-full h-screen" />}
+        {image && <img src={image} alt="result" className="w-full h-screen" />}
         {!isLoading && (
           <div className="fixed top-0 w-full z-10 flex justify-end p-2">
             <Button
