@@ -44,6 +44,7 @@ export default function Home() {
   const [isCategoryLocked, setIsCategoryLocked] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
+  const [isGeoLoading, setIsGeoLoading] = useState<boolean>(false);
   const {
     isOpen: isMandatoryModalOpen,
     onOpenChange: onMandatoryModalOpenChange,
@@ -96,6 +97,7 @@ export default function Home() {
   );
 
   const setLocation = () => {
+    setIsGeoLoading(true);
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         ({ coords: { latitude, longitude } }) => {
@@ -104,9 +106,11 @@ export default function Home() {
             lng: longitude.toString(),
           });
           mutateMap();
+          setIsGeoLoading(false);
         },
         (err) => {
           err && setGeoLocError("missing-coordinates-error-text");
+          setIsGeoLoading(false);
         },
       );
     }
@@ -251,7 +255,7 @@ export default function Home() {
     <section className="flex flex-col items-center pt-2 min-h-72">
       <Skeleton
         className="rounded-lg"
-        isLoaded={!isMapLoading || true}
+        isLoaded={!isMapLoading || !isGeoLoading}
       >
         <Button
           color={mapData?.data ? "default" : "warning"}
