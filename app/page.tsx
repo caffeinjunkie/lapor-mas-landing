@@ -262,7 +262,7 @@ export default function Home() {
           color={mapData?.data ? "default" : "warning"}
           startContent={mapData?.data ? <MapIcon /> : <RefreshIcon />}
           variant="light"
-          onPress={setLocation}
+          onPress={mutateMap}
         >
           {mapData?.data
             ? `${mapData.data.village}`
