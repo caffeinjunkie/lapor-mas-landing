@@ -27,6 +27,7 @@ export const FollowUpForm = ({
             classNames={{
               input: "h-fit",
             }}
+            maxLength={100}
             key={question}
             label={question}
             name={question}

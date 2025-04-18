@@ -43,6 +43,7 @@ export const ComplaintForm = ({
     >
       <Input
         isRequired
+        maxLength={50}
         errorMessage={t("title-error-message")}
         label={t("title-input-text")}
         defaultValue={title}
@@ -52,6 +53,7 @@ export const ComplaintForm = ({
       <Textarea
         label={t("description-textarea-text")}
         name="description"
+        maxLength={500}
         defaultValue={description}
         isRequired
         errorMessage={t("description-error-message")}
@@ -85,6 +87,7 @@ export const ComplaintForm = ({
           errorMessage={t("address-error-message")}
           label={t("address-input-text")}
           name="address"
+          maxLength={200}
           type="text"
         />
       )}
