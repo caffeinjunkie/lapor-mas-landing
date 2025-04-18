@@ -1,251 +1,338 @@
 "use client";
 
-import React from "react";
-import { CameraType } from "react-camera-pro";
 import { Button } from "@heroui/button";
+import { useDisclosure } from "@heroui/modal";
 import { Skeleton } from "@heroui/skeleton";
-import {
-  Modal,
-  ModalContent,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from "@heroui/modal";
-import { getLocalTimeZone, now } from "@internationalized/date";
+import { Spinner } from "@heroui/spinner";
+import { useTranslations } from "next-intl";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 
+import {
+  deleteTemporaryData,
+  getCoordinates,
+  getTemporaryData,
+  handleCreateTask,
+  saveCoordinates,
+  saveTemporaryData,
+} from "./handlers";
+
+import { fetchLocation } from "@/api/location";
+import { fetchTasks } from "@/api/tasks";
+import { Camera } from "@/components/form/camera";
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
-import { Camera } from "@/components/camera";
 import { Menu } from "@/components/menu";
+import { AIModal } from "@/components/modals/ai-modal";
+import { MandatoryModal } from "@/components/modals/mandatory-modal";
 import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
-import { Address, findAddress } from "@/utils/google-maps";
-import { ComplaintForm } from "@/components/complaint-form";
-import { formatDate } from "@/utils/date";
-import { useTranslations } from "next-intl";
-import { fetchTasks } from "@/api/tasks";
-import { Report } from "@/types/report.types";
-import { Spinner } from "@heroui/spinner";
+import useApi from "@/hooks/use-api";
+import { Report, ReportPayload } from "@/types/report.types";
+import { getUserPrompt } from "@/utils/prompts";
 
 export default function Home() {
   const t = useTranslations("HomePage");
-  const cameraRef = React.useRef<CameraType>(null);
-  const [image, setImage] = React.useState<string | null>(null);
-  const [deviceReady, setDeviceReady] = React.useState(false);
-  const [selectedCategory, setSelectedCategory] =
-    React.useState<Category | null>(null);
-  const [isStep2, setIsStep2] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [address, setAddress] = React.useState<Address | null>(null);
-  const [isAddressLoaded, setIsAddressLoaded] = React.useState<boolean>(true);
-  const [isCategoryLocked, setIsCategoryLocked] =
-    React.useState<boolean>(false);
-
-  const { isOpen, onOpenChange, onOpen } = useDisclosure();
+  const coordinates = getCoordinates();
+  const [deviceReady, setDeviceReady] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+  const [currentStep, setCurrentStep] = useState<string>("upload-form");
+  const [geoLocError, setGeoLocError] = useState<string | null>(null);
+  const [address, setAddress] = useState<Report["address"] | null>(null);
+  const [isCategoryLocked, setIsCategoryLocked] = useState<boolean>(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
+  const [isGeoLoading, setIsGeoLoading] = useState<boolean>(false);
+  const {
+    isOpen: isMandatoryModalOpen,
+    onOpenChange: onMandatoryModalOpenChange,
+    onOpen: onMandatoryModalOpen,
+    onClose: onMandatoryModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isAiModalOpen,
+    onOpenChange: onAiModalOpenChange,
+    onOpen: onAiModalOpen,
+    onClose: onAiModalClose,
+  } = useDisclosure();
+  const {
+    data: aiResponse,
+    error: aiError,
+    loading: aiLoading,
+    fetchData: fetchAiData,
+  } = useApi();
 
   const {
     data: publicReports,
     error: dataError,
-    isValidating,
+    isValidating: isReportsLoading,
+    mutate: mutateReports,
   } = useSWR<Report[]>(["reports"], fetchTasks as any, {
     dedupingInterval: 60000,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   });
 
-  React.useEffect(() => {
-    // const fetchPublicReports = async () => {
-    //   const { data } = await fetchTasks();
+  const {
+    data: mapData,
+    error: mapError,
+    isValidating: isMapLoading,
+    mutate: mutateMap,
+  } = useSWR(
+    coordinates?.lat && coordinates?.lng
+      ? ["map", coordinates.lat, coordinates.lng]
+      : null,
+    ([_, lat, lng]) => fetchLocation(lat, lng),
+    {
+      dedupingInterval: 60000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      onErrorRetry: (_, __, ___, revalidate, { retryCount }) => {
+        if (retryCount >= 3) return;
+        setTimeout(() => revalidate({ retryCount }), 1000);
+      },
+    },
+  );
 
-    //   setPublicReports(data as Report[]);
-    // };
+  const setLocation = () => {
+    setIsGeoLoading(true);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords: { latitude, longitude } }) => {
+          saveCoordinates({
+            lat: latitude.toString(),
+            lng: longitude.toString(),
+          });
+          mutateMap();
+          setIsGeoLoading(false);
+        },
+        (err) => {
+          err && setGeoLocError("missing-coordinates-error-text");
+          setIsGeoLoading(false);
+        },
+      );
+    }
+  };
 
-    // fetchPublicReports();
-    refreshLocation();
+  useEffect(() => {
+    setLocation();
   }, []);
 
-  React.useEffect(() => {
-    if (!isOpen) {
-      setImage(null);
+  useEffect(() => {
+    if (!isMandatoryModalOpen) {
       setDeviceReady(false);
-      setIsStep2(false);
       setSelectedCategory(null);
       setIsCategoryLocked(false);
     }
-  }, [isOpen]);
+  }, [isMandatoryModalOpen]);
 
-  const refreshLocation = () => {
-    setIsAddressLoaded(false);
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async ({ coords: { latitude, longitude } }) => {
-          try {
-            const address = await findAddress(latitude, longitude);
+  useEffect(() => {
+    if (aiResponse && !aiLoading) {
+      setCurrentStep("ai-checked");
 
-            if (address) {
-              setAddress(address);
-            }
-          } catch (err: any) {
-            setError(err.message);
-          } finally {
-            setIsAddressLoaded(true);
-          }
-        },
-        (err) => {
-          setError(t("failed-to-load-error-text", { message: err.message }));
-          setIsAddressLoaded(true);
-        },
-      );
-    } else {
-      setError(t("gps-failed-error-text"));
-      setIsAddressLoaded(true);
+      const isNonCritical = selectedCategory?.key === "lainnya";
+      const isReportValid =
+        (isNonCritical
+          ? (aiResponse?.validityScore ?? 0) >= 70
+          : (aiResponse?.validityScore ?? 0) >= 80) && !aiResponse.isSpam;
+      if (isReportValid) {
+        setTimeout(() => {
+          setCurrentStep("follow-up-form");
+        }, 1000);
+      }
     }
-  };
-
-  const takePhoto = () => {
-    if (cameraRef.current) {
-      const photo = cameraRef.current.takePhoto();
-
-      setImage(photo as string);
-    }
-  };
-
-  const retakePhoto = () => {
-    setImage(null);
-    setIsStep2(false);
-  };
+  }, [aiResponse]);
 
   const selectMenu = (category: Category) => {
     setSelectedCategory(category);
-    onOpen();
+    onReportCollectingStart();
     setIsCategoryLocked(true);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onCameraOpen = () => {
+    if (files.length > 2) {
+      return;
+    }
+    setIsCameraOpen(true);
+  };
+
+  const onReportSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
-    const enrichedData: any = {
-      ...dataFromEntries,
-      image,
-      category: selectedCategory?.label,
-      date: formatDate(now(getLocalTimeZone()).toString()),
+    const tempData = getTemporaryData();
+    const fuQnA = Object.fromEntries(new FormData(e.currentTarget));
+    const followUpQuestions = Object.entries(fuQnA)
+      .filter(([_, answer]) => answer !== "")
+      .map(([question, answer]) => ({
+        q: question,
+        a: answer.toString(),
+      }));
+
+    const coordinates = getCoordinates();
+
+    const payload = {
+      ...tempData,
+      priority: aiResponse?.priority,
+      address: {
+        full_address: address?.full_address,
+        village: address?.village,
+        district: address?.district,
+        lat: coordinates?.lat,
+        lng: coordinates?.lng,
+      },
     };
 
-    // saveToSessionStorage(enrichedData);
-    // update state
+    handleCreateTask(
+      payload as ReportPayload,
+      followUpQuestions,
+      files,
+      mutateReports,
+      onAiModalClose,
+      setIsSubmitLoading,
+    );
+  };
+
+  const onOpenAICheck = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
+    const submitValue = getUserPrompt(
+      dataFromEntries.title as string,
+      (dataFromEntries.description as string) ||
+        (selectedCategory?.key as string),
+      dataFromEntries.category as string,
+      dataFromEntries.address as string,
+    );
+    onMandatoryModalClose();
+    onAiModalOpen();
+    setCurrentStep("ai-checking");
+    saveTemporaryData({
+      ...dataFromEntries,
+      category: selectedCategory?.key as string,
+      address: {
+        full_address: dataFromEntries.address,
+        village: mapData?.village,
+        district: mapData?.district,
+        lat: mapData?.lat,
+        lng: mapData?.lng,
+      },
+    });
+    await fetchAiData(submitValue);
+  };
+
+  const handleConfirmPhoto = (file: File) => {
+    setFiles([...files, file]);
+    setIsCameraOpen(false);
+  };
+
+  const onAiModalBack = () => {
+    setCurrentStep("info-form");
+    onAiModalClose();
+    onMandatoryModalOpen();
+  };
+
+  const reset = () => {
+    setDeviceReady(false);
+    setIsCameraOpen(false);
+    setCurrentStep("upload-form");
+    setFiles([]);
+  };
+
+  const onReportCollectingStart = () => {
+    onMandatoryModalOpen();
+    const fullAddress = `${mapData?.data?.village}, ${mapData?.data?.district}, ${mapData?.data?.regency}, ${mapData?.data?.province}, ${mapData?.data?.code}`;
+    const isFullAddressValid = !fullAddress.includes("undefined");
+    setAddress({
+      full_address: isFullAddressValid ? fullAddress : "",
+      village: mapData?.data?.village || "",
+      district: mapData?.data?.district || "",
+      lat: mapData?.data?.lat || "",
+      lng: mapData?.data?.lng || "",
+    });
   };
 
   return (
     <section className="flex flex-col items-center pt-2 min-h-72">
       <Skeleton
         className="rounded-lg"
-        isLoaded={isAddressLoaded && (address !== null || error !== null)}
+        isLoaded={!isMapLoading && !isGeoLoading}
       >
         <Button
-          color={address ? "default" : "warning"}
-          startContent={address ? <MapIcon /> : <RefreshIcon />}
+          color={mapData?.data ? "default" : "warning"}
+          startContent={mapData?.data ? <MapIcon /> : <RefreshIcon />}
           variant="light"
-          onPress={refreshLocation}
+          onPress={setLocation}
         >
-          {address
-            ? `${address.adminArea3}`
-            : error
-              ? t(error)
-              : t("fetch-location-failed-error-text")}
+          {mapData?.data
+            ? `${mapData.data.village}`
+            : mapError || geoLocError
+              ? t(mapError?.message || geoLocError)
+              : t("fetch-location-refresh-text")}
         </Button>
       </Skeleton>
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
         <ReportList
           title={t("newest-reports-text")}
-          isEmpty={publicReports?.length === 0}
+          isEmpty={isReportsLoading || publicReports?.length === 0}
+          isError={dataError}
         >
-          {isValidating && <Spinner />}
-          {!isValidating && publicReports?.length === 0 && (
+          {isReportsLoading && <Spinner />}
+          {!isReportsLoading && publicReports?.length === 0 && (
             <ReportList.Empty value={t("empty-text")} />
           )}
-          {!isValidating &&
+          {!isReportsLoading &&
             publicReports &&
             publicReports.map((item: Report, index: number) => (
               <ReportList.Item key={index} item={item} />
             ))}
         </ReportList>
         <div className="flex gap-3">
-          <Modal
-            isOpen={isOpen}
-            placement="bottom-center"
-            onOpenChange={onOpenChange}
-          >
-            <ModalContent className="transform transition-transform duration-200">
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col items-center gap-1">
-                    Foto Barang Bukti!
-                  </ModalHeader>
-                  <ModalBody className="gap-4">
-                    {!isStep2 && (
-                      <Camera
-                        ref={cameraRef}
-                        deviceReady={deviceReady}
-                        image={image}
-                        setDeviceReady={setDeviceReady}
-                      />
-                    )}
-                    {isStep2 && (
-                      <ComplaintForm
-                        address={address}
-                        category={selectedCategory}
-                        isCategorySelectionLocked={isCategoryLocked}
-                        setCategory={setSelectedCategory}
-                        onClose={onClose}
-                        onSubmit={handleSubmit}
-                      />
-                    )}
-                  </ModalBody>
-                  {!isStep2 && (
-                    <ModalFooter className="flex flex-row items-center justify-between">
-                      <Button color="danger" variant="light" onPress={onClose}>
-                        {t("create-report-cancel-text")}
-                      </Button>
-                      {!image && (
-                        <Button
-                          isIconOnly
-                          color="danger"
-                          isDisabled={!deviceReady}
-                          radius="full"
-                          onPress={takePhoto}
-                        >
-                          <CameraIcon fill="white" />
-                        </Button>
-                      )}
-                      {image && (
-                        <Button
-                          color="default"
-                          startContent={<RefreshIcon />}
-                          variant="light"
-                          onPress={retakePhoto}
-                        >
-                          {t("create-report-redo-text")}
-                        </Button>
-                      )}
-                      {!isStep2 && (
-                        <Button
-                          color="primary"
-                          isDisabled={!image}
-                          type="submit"
-                          variant="light"
-                          onPress={() => setIsStep2(true)}
-                        >
-                          {t("create-report-continue-text")}
-                        </Button>
-                      )}
-                    </ModalFooter>
-                  )}
-                </>
-              )}
-            </ModalContent>
-          </Modal>
+          <MandatoryModal
+            isOpen={isMandatoryModalOpen}
+            onClose={() => {
+              reset();
+              onMandatoryModalClose();
+            }}
+            onOpenChange={onMandatoryModalOpenChange}
+            t={t}
+            currentStep={currentStep}
+            onSubmit={onOpenAICheck}
+            address={address}
+            isCategoryLocked={isCategoryLocked}
+            setCurrentStep={setCurrentStep}
+            files={files}
+            setFiles={setFiles}
+            onCameraOpen={onCameraOpen}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
+          <AIModal
+            isOpen={isAiModalOpen}
+            isSubmitLoading={isSubmitLoading}
+            onClose={() => {
+              reset();
+              deleteTemporaryData();
+              onAiModalClose();
+            }}
+            onOpenChange={onAiModalOpenChange}
+            t={t}
+            isError={aiError}
+            isNonCriticalType={selectedCategory?.key === "lainnya"}
+            aiResponse={aiResponse}
+            isLoading={aiLoading}
+            currentStep={currentStep}
+            onBack={onAiModalBack}
+            onSubmit={onReportSubmit}
+          />
+          {isCameraOpen && (
+            <Camera
+              onClose={() => setIsCameraOpen(false)}
+              deviceReady={deviceReady}
+              onConfirm={handleConfirmPhoto}
+              setDeviceReady={setDeviceReady}
+            />
+          )}
           <div className="w-full fixed flex justify-center bottom-0 pt-4 pb-10 left-0">
             <Button
               color="primary"
@@ -253,7 +340,7 @@ export default function Home() {
               size="lg"
               startContent={<CameraIcon />}
               variant="shadow"
-              onPress={onOpen}
+              onPress={onReportCollectingStart}
             >
               {t("create-report-cta-text")}
             </Button>

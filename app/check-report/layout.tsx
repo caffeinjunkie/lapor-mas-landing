@@ -1,5 +1,3 @@
-import { Link } from "@heroui/link";
-
 export default function AboutLayout({
   children,
 }: {

@@ -1,19 +1,19 @@
 "use client";
 
-import React from "react";
 import {
   Navbar as HeroUINavbar,
-  NavbarContent,
   NavbarBrand,
+  NavbarContent,
   NavbarItem,
 } from "@heroui/navbar";
 import { link as linkStyles } from "@heroui/theme";
-import NextLink from "next/link";
 import clsx from "clsx";
-
-import { ThemeSwitch } from "@/components/theme-switch";
-import { Logo } from "@/components/icons";
 import { useTranslations } from "next-intl";
+import NextLink from "next/link";
+import React from "react";
+
+import { Logo } from "@/components/icons";
+import { ThemeSwitch } from "@/components/theme-switch";
 
 export const Navbar = () => {
   const t = useTranslations("Navbar");

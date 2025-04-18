@@ -1,7 +1,7 @@
+import { useTranslations } from "next-intl";
 import React from "react";
 
-import { categories, Category } from "@/config/complaint-category";
-import { useTranslations } from "next-intl";
+import { Category, categories } from "@/config/complaint-category";
 
 type MenuProps = {
   onMenuPress: (category: Category) => void;

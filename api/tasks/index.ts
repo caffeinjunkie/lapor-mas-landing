@@ -1,3 +1,5 @@
+import { QuestionAnswer, Report } from "@/types/report.types";
+import { generateSecureCode } from "@/utils/crypto";
 import supabase from "@/utils/supabase-db";
 
 export type SortType = {
@@ -10,11 +12,53 @@ export type FilterType = {
   value: string[] | string;
 };
 
-export const fetchTasks = async () => {
-  const { data, count, error } = await supabase
+export type CreateTaskType = {
+  title: string;
+  description: string;
+  images: string[];
+  category: string;
+  followUpQuestions: QuestionAnswer[];
+  address: Report["address"];
+  priority: string;
+};
+
+export const createTask = async ({
+  title,
+  description,
+  category,
+  followUpQuestions,
+  priority,
+  address,
+  images,
+}: CreateTaskType) => {
+  const trackingId = await generateSecureCode();
+  const { data, error } = await supabase
     .from("tasks")
-    .select("*", { count: "exact" })
-    .range(0, 6)
+    .insert({
+      title,
+      description,
+      category,
+      priority,
+      address,
+      status: "PENDING",
+      tracking_id: trackingId,
+      images,
+      data: {
+        follow_up_questions: followUpQuestions,
+      },
+    })
+    .single();
+
+  if (error) throw error;
+
+  return { data };
+};
+
+export const fetchTasks = async () => {
+  const { data, error } = await supabase
+    .from("tasks")
+    .select("*")
+    .range(0, 5)
     .order("created_at", { ascending: false })
     .eq("status", "PENDING");
 
