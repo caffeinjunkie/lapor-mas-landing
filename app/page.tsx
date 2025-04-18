@@ -255,7 +255,7 @@ export default function Home() {
     <section className="flex flex-col items-center pt-2 min-h-72">
       <Skeleton
         className="rounded-lg"
-        isLoaded={!isMapLoading || !isGeoLoading}
+        isLoaded={!isMapLoading && !isGeoLoading}
       >
         <Button
           color={mapData?.data ? "default" : "warning"}
