@@ -1,6 +1,6 @@
 import { Button } from "@heroui/button";
 import { Form } from "@heroui/form";
-import { Input } from "@heroui/input";
+import { Input, Textarea } from "@heroui/input";
 import { useTranslations } from "next-intl";
 
 interface FollowUpFormProps {
@@ -19,13 +19,13 @@ export const FollowUpForm = ({
   const t = useTranslations("FollowUpForm");
   return (
     <Form onSubmit={onSubmit} className="w-full py-4 gap-8">
-      <div className="flex flex-col gap-8 w-full">
+      <div className="flex flex-col gap-4 w-full">
         {questions.map((question) => (
-          <Input
+          <Textarea
             labelPlacement="outside"
             placeholder={t("answer-text")}
             classNames={{
-              input: "h-fit",
+              inputWrapper: "flex-grow h-fit",
             }}
             maxLength={100}
             key={question}

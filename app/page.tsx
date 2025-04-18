@@ -129,8 +129,6 @@ export default function Home() {
   useEffect(() => {
     if (aiResponse && !aiLoading) {
       setCurrentStep("ai-checked");
-      const tempData = getTemporaryData();
-      saveTemporaryData({ ...tempData, priority: aiResponse.priority });
 
       const isNonCritical = selectedCategory?.key === "lainnya";
       const isReportValid =
@@ -173,6 +171,7 @@ export default function Home() {
 
     const payload = {
       ...tempData,
+      priority: aiResponse?.priority,
       address: {
         full_address: address?.full_address,
         village: address?.village,
