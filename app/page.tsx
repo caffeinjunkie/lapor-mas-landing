@@ -12,7 +12,7 @@ import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import { useTranslations } from "next-intl";
 import { fetchTasks } from "@/api/tasks";
-import { Report } from "@/types/report.types";
+import { Report, ReportPayload } from "@/types/report.types";
 import { Spinner } from "@heroui/spinner";
 import { getUserPrompt } from "@/utils/prompts";
 import useApi from "@/hooks/use-api";
@@ -42,6 +42,7 @@ export default function Home() {
   const [address, setAddress] = useState<Report["address"] | null>(null);
   const [isCategoryLocked, setIsCategoryLocked] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
   const {
     isOpen: isMandatoryModalOpen,
     onOpenChange: onMandatoryModalOpenChange,
@@ -104,7 +105,7 @@ export default function Home() {
           mutateMap();
         },
         (err) => {
-          err && setGeoLocError(t("missing-coordinates-error-text"));
+          err && setGeoLocError("missing-coordinates-error-text");
         },
       );
     }
@@ -180,7 +181,14 @@ export default function Home() {
       },
     };
 
-    handleCreateTask(payload, followUpQuestions, files, mutateReports, onAiModalClose);
+    handleCreateTask(
+      payload as ReportPayload,
+      followUpQuestions,
+      files,
+      mutateReports,
+      onAiModalClose,
+      setIsSubmitLoading,
+    );
   };
 
   const onOpenAICheck = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -302,6 +310,7 @@ export default function Home() {
           />
           <AIModal
             isOpen={isAiModalOpen}
+            isSubmitLoading={isSubmitLoading}
             onClose={() => {
               reset();
               deleteTemporaryData();

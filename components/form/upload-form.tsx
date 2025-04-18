@@ -4,7 +4,7 @@ import { useTranslations } from "use-intl";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
-import { checkError } from "@/utils/image";
+import { checkError, compressImage } from "@/utils/image";
 
 export const UploadForm = ({
   onNext,
@@ -23,17 +23,25 @@ export const UploadForm = ({
   const [fileError, setFileError] = useState<string | null>(null);
   const t = useTranslations("UploadForm");
 
-  const onSelectFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onSelectFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileError(null);
     const selectedFiles = Array.from(e.target.files || []) as File[];
     if (selectedFiles.length > 1) {
       return;
     }
-    if (checkError([...files, ...selectedFiles])) {
+
+    const fileName = selectedFiles[0].name;
+
+    const compressedFile = await compressImage(selectedFiles[0], 1000);
+    const file = new File([compressedFile as Blob], fileName, {
+      type: "image/jpeg",
+    });
+
+    if (checkError([...files, file])) {
       setFileError(t("file-size-error-message"));
       return;
     }
-    setFiles([...files, ...selectedFiles]);
+    setFiles([...files, file]);
   };
 
   const onDeleteFile = (index: number) => {

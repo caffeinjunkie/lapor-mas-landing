@@ -14,6 +14,7 @@ interface AIModalProps {
   isLoading: boolean;
   currentStep: string;
   isError: boolean;
+  isSubmitLoading: boolean;
   onBack: () => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -26,6 +27,7 @@ export const AIModal = ({
   isNonCriticalType,
   aiResponse,
   isLoading,
+  isSubmitLoading,
   currentStep,
   isError,
   onBack,
@@ -100,6 +102,7 @@ export const AIModal = ({
                   questions={aiResponse.followUpQuestions}
                   onClose={onClose}
                   onSubmit={onSubmit}
+                  isLoading={isSubmitLoading}
                 />
               )}
             </ModalBody>

@@ -1,36 +1,43 @@
 import { uploadImageToServer } from "@/api/pekerja-ai";
 import { createTask } from "@/api/tasks";
-import { QuestionAnswer, Report } from "@/types/report.types";
+import { QuestionAnswer, Report, ReportPayload } from "@/types/report.types";
+import {
+  clearSessionStorage,
+  getFromSessionStorage,
+  saveToSessionStorage,
+} from "@/utils/session-storage";
 import { KeyedMutator } from "swr";
 
 export const saveTemporaryData = (data: Record<string, any>) => {
-  sessionStorage.setItem("temporaryData", JSON.stringify(data));
+  saveToSessionStorage("temporaryData", data);
 };
 
 export const deleteTemporaryData = () => {
-  sessionStorage.removeItem("temporaryData");
+  clearSessionStorage("temporaryData");
 };
 
 export const getTemporaryData = () => {
-  return JSON.parse(sessionStorage.getItem("temporaryData") || "{}");
+  return getFromSessionStorage("temporaryData")[0];
 };
 
-export const saveCoordinates = (data: Record<string, any>) => {
-  sessionStorage.setItem("coordinates", JSON.stringify(data));
+export const saveCoordinates = (data: { lat: string; lng: string }) => {
+  saveToSessionStorage("coordinates", data);
 };
 
 export const getCoordinates = () => {
-  return JSON.parse(sessionStorage.getItem("coordinates") || "{}");
+  return getFromSessionStorage("coordinates")[0];
 };
 
 export const handleCreateTask = async (
-  tempData: Report,
+  payload: ReportPayload,
   followUpQuestions: QuestionAnswer[],
   files: File[],
   mutateReports: KeyedMutator<Report[]>,
   closeModal: () => void,
+  setIsSubmitLoading: (isLoading: boolean) => void,
 ) => {
   let imgUrls = [];
+  setIsSubmitLoading(true);
 
   try {
     if (files.length > 0) {
@@ -39,14 +46,14 @@ export const handleCreateTask = async (
         imgUrls.push(url);
       }
     }
-  
+
     await createTask({
-      title: tempData.title,
-      description: tempData.description,
-      category: tempData.category,
+      title: payload.title,
+      description: payload.description,
+      category: payload.category,
       followUpQuestions,
-      priority: tempData.priority,
-      address: tempData.address,
+      priority: payload.priority,
+      address: payload.address,
       images: imgUrls,
     });
     await mutateReports();
@@ -55,5 +62,6 @@ export const handleCreateTask = async (
   } finally {
     deleteTemporaryData();
     closeModal();
+    setIsSubmitLoading(false);
   }
 };

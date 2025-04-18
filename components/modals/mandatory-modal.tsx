@@ -39,6 +39,7 @@ export const MandatoryModal = ({
   selectedCategory,
   setSelectedCategory,
 }: MandatoryModalProps) => {
+  const tempporaryData = getTemporaryData();99
   return (
     <Modal
       isDismissable={false}
@@ -70,8 +71,8 @@ export const MandatoryModal = ({
               {currentStep === "info-form" && (
                 <ComplaintForm
                   address={address}
-                  title={getTemporaryData().title ?? ""}
-                  description={getTemporaryData().description ?? ""}
+                  title={tempporaryData?.title ?? ""}
+                  description={tempporaryData?.description ?? ""}
                   category={selectedCategory}
                   isCategorySelectionLocked={isCategoryLocked}
                   setCategory={setSelectedCategory}

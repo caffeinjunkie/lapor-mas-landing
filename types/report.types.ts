@@ -19,6 +19,14 @@ interface Address {
   lng: string;
 }
 
+export interface ReportPayload {
+  title: string;
+  description: string;
+  category: string;
+  priority: string;
+  address: Address;
+}
+
 export interface Report {
   id: string;
   tracking_id: string;

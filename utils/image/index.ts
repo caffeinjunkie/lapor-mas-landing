@@ -11,13 +11,16 @@ export function base64ToBlob(base64: string, mimeType: string) {
 }
 
 export async function compressImage(
-  blob: Blob,
+  file: Blob | File,
   targetSizeKB: number,
   maxAttempts = 5,
 ) {
+  if (!file.type.startsWith("image/")) {
+    return file; // Return original if not an image
+  }
   return new Promise(async (resolve) => {
     const img = new Image();
-    const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(file);
     img.src = url;
 
     img.onload = async () => {

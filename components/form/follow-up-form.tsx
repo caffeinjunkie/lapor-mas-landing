@@ -7,11 +7,13 @@ interface FollowUpFormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   questions: string[];
   onClose: () => void;
+  isLoading: boolean;
 }
 
 export const FollowUpForm = ({
   onSubmit,
   questions,
+  isLoading,
   onClose,
 }: FollowUpFormProps) => {
   const t = useTranslations("FollowUpForm");
@@ -41,7 +43,12 @@ export const FollowUpForm = ({
         >
           {t("cancel-text")}
         </Button>
-        <Button className="w-full" color="primary" type="submit">
+        <Button
+          className="w-full"
+          color="primary"
+          isLoading={isLoading}
+          type="submit"
+        >
           {t("submit-text")}
         </Button>
       </div>
