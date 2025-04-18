@@ -1,8 +1,9 @@
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { InvalidReportIcon, SpamIcon, ValidReportIcon } from "../icons";
 import { Button } from "@heroui/button";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+
 import { FollowUpForm } from "../form/follow-up-form";
+import { InvalidReportIcon, SpamIcon, ValidReportIcon } from "../icons";
 
 interface AIModalProps {
   isOpen: boolean;

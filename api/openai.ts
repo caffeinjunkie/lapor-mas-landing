@@ -1,5 +1,6 @@
 import { OpenAI } from "openai";
-import { getSystemPrompt, getFunctions } from "@/utils/prompts";
+
+import { getFunctions, getSystemPrompt } from "@/utils/prompts";
 
 const client = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,

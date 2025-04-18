@@ -1,21 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { Button } from "@heroui/button";
 import { useDisclosure } from "@heroui/modal";
+import { Skeleton } from "@heroui/skeleton";
+import { Spinner } from "@heroui/spinner";
+import { useTranslations } from "next-intl";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 
-import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
-import { Camera } from "@/components/form/camera";
-import { Menu } from "@/components/menu";
-import { ReportList } from "@/components/report";
-import { Category } from "@/config/complaint-category";
-import { useTranslations } from "next-intl";
-import { fetchTasks } from "@/api/tasks";
-import { Report, ReportPayload } from "@/types/report.types";
-import { Spinner } from "@heroui/spinner";
-import { getUserPrompt } from "@/utils/prompts";
-import useApi from "@/hooks/use-api";
 import {
   deleteTemporaryData,
   getCoordinates,
@@ -24,10 +16,19 @@ import {
   saveCoordinates,
   saveTemporaryData,
 } from "./handlers";
-import { MandatoryModal } from "@/components/modals/mandatory-modal";
-import { AIModal } from "@/components/modals/ai-modal";
-import { Skeleton } from "@heroui/skeleton";
+
 import { fetchLocation } from "@/api/location";
+import { fetchTasks } from "@/api/tasks";
+import { Camera } from "@/components/form/camera";
+import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
+import { Menu } from "@/components/menu";
+import { AIModal } from "@/components/modals/ai-modal";
+import { MandatoryModal } from "@/components/modals/mandatory-modal";
+import { ReportList } from "@/components/report";
+import { Category } from "@/config/complaint-category";
+import useApi from "@/hooks/use-api";
+import { Report, ReportPayload } from "@/types/report.types";
+import { getUserPrompt } from "@/utils/prompts";
 
 export default function Home() {
   const t = useTranslations("HomePage");

@@ -1,7 +1,8 @@
-import React from "react";
-import { Item } from "./item";
 import clsx from "clsx";
 import { useTranslations } from "next-intl";
+import React from "react";
+
+import { Item } from "./item";
 
 interface BottomSheetProps {
   children?: React.ReactNode;

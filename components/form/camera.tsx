@@ -1,10 +1,12 @@
+import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
+import { useTranslations } from "next-intl";
 import React, { useRef, useState } from "react";
 import { CameraType, Camera as CameraView } from "react-camera-pro";
-import { Spinner } from "@heroui/spinner";
-import { Button } from "@heroui/button";
+
 import { CameraIcon, CheckIcon } from "../icons";
+
 import { base64ToBlob, compressImage } from "@/utils/image";
-import { useTranslations } from "next-intl";
 
 type CameraProps = {
   deviceReady: boolean;
@@ -67,7 +69,7 @@ export const Camera = ({
             }}
           />
         )}
-        {image && <img src={image} className="w-full h-screen" />}
+        {image && <img src={image} alt="image" className="w-full h-screen" />}
         {!isLoading && (
           <div className="fixed top-0 w-full z-10 flex justify-end p-2">
             <Button

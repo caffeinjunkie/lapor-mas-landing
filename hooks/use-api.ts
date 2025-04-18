@@ -1,5 +1,6 @@
+import { useCallback, useState } from "react";
+
 import openai from "@/api/openai";
-import { useState, useCallback } from "react";
 
 const useApi = () => {
   const [data, setData] = useState<any>();

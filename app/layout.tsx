@@ -1,14 +1,14 @@
-import "@/styles/globals.css";
-import { Metadata, Viewport } from "next";
 import clsx from "clsx";
+import { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
+import { Fira_Code as FontMono, Manrope as FontSans } from "next/font/google";
 
 import { Providers } from "./providers";
 
-import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
-import { Fira_Code as FontMono, Manrope as FontSans } from "next/font/google";
+import { siteConfig } from "@/config/site";
+import "@/styles/globals.css";
 
 export const fontSans = FontSans({
   subsets: ["latin"],

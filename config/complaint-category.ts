@@ -1,14 +1,15 @@
+import * as React from "react";
+
 import {
   BillIcon,
   BuildingIcon,
-  PublicFacilityIcon,
   CoinIcon,
   ConeIcon,
   FoodIcon,
   OthersIcon,
+  PublicFacilityIcon,
   SecurityIcon,
 } from "@/components/icons";
-import * as React from "react";
 import { IconSvgProps } from "@/types";
 
 export const categories: CategoryProps[] = [

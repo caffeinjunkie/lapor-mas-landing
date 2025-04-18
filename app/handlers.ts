@@ -1,3 +1,5 @@
+import { KeyedMutator } from "swr";
+
 import { uploadImageToServer } from "@/api/pekerja-ai";
 import { createTask } from "@/api/tasks";
 import { QuestionAnswer, Report, ReportPayload } from "@/types/report.types";
@@ -6,7 +8,6 @@ import {
   getFromSessionStorage,
   saveToSessionStorage,
 } from "@/utils/session-storage";
-import { KeyedMutator } from "swr";
 
 export const saveTemporaryData = (data: Record<string, any>) => {
   saveToSessionStorage("temporaryData", data);

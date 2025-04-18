@@ -1,7 +1,9 @@
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
-import { UploadForm } from "../form/upload-form";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Dispatch, SetStateAction } from "react";
+
 import { ComplaintForm } from "../form/complaint-form";
+import { UploadForm } from "../form/upload-form";
+
 import { getTemporaryData } from "@/app/handlers";
 import { Category } from "@/config/complaint-category";
 import { Report } from "@/types/report.types";
@@ -39,7 +41,8 @@ export const MandatoryModal = ({
   selectedCategory,
   setSelectedCategory,
 }: MandatoryModalProps) => {
-  const tempporaryData = getTemporaryData();99
+  const tempporaryData = getTemporaryData();
+  99;
   return (
     <Modal
       isDismissable={false}

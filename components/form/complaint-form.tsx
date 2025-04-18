@@ -1,12 +1,12 @@
-import React from "react";
-import { Input, Textarea } from "@heroui/input";
-import { Form } from "@heroui/form";
-import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
-
-import { categories, Category } from "@/config/complaint-category";
-import { FileIcon } from "@/components/icons";
+import { Form } from "@heroui/form";
+import { Input, Textarea } from "@heroui/input";
+import { Select, SelectItem } from "@heroui/select";
 import { useTranslations } from "next-intl";
+import React from "react";
+
+import { FileIcon } from "@/components/icons";
+import { Category, categories } from "@/config/complaint-category";
 import { Report } from "@/types/report.types";
 
 interface ComplaintFormProps {

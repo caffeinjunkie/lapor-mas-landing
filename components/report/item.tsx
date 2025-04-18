@@ -1,11 +1,11 @@
 import { Card, CardBody } from "@heroui/card";
-
-import { formatLocaleDate } from "@/utils/date/index";
-import { Report } from "@/types/report.types";
 import { Chip } from "@heroui/chip";
-import { useTranslations } from "next-intl";
-import { PriorityChipColor, PriorityLabel } from "@/config/report";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
+
+import { PriorityChipColor, PriorityLabel } from "@/config/report";
+import { Report } from "@/types/report.types";
+import { formatLocaleDate } from "@/utils/date/index";
 
 type ItemProps = {
   item: Report;

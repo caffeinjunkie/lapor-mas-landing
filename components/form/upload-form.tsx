@@ -1,9 +1,11 @@
-import { Card, CardBody } from "@heroui/card";
-import { CameraIcon, FileIcon } from "../icons";
-import { useTranslations } from "use-intl";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Button } from "@heroui/button";
+import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { useTranslations } from "use-intl";
+
+import { CameraIcon, FileIcon } from "../icons";
+
 import { checkError, compressImage } from "@/utils/image";
 
 export const UploadForm = ({
