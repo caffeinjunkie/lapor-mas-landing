@@ -113,8 +113,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const savedCoordinates = getCoordinates();
-    if (savedCoordinates) return;
     setLocation();
   }, []);
 
@@ -253,16 +251,13 @@ export default function Home() {
     <section className="flex flex-col items-center pt-2 min-h-72">
       <Skeleton
         className="rounded-lg"
-        isLoaded={
-          !isMapLoading &&
-          (mapData?.data !== null || mapError !== null || geoLocError !== null)
-        }
+        isLoaded={!isMapLoading || true}
       >
         <Button
           color={mapData?.data ? "default" : "warning"}
           startContent={mapData?.data ? <MapIcon /> : <RefreshIcon />}
           variant="light"
-          onPress={mutateMap}
+          onPress={setLocation}
         >
           {mapData?.data
             ? `${mapData.data.village}`
