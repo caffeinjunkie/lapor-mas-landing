@@ -23,6 +23,7 @@
     "@heroui/pagination": "^2.2.14",
     "@heroui/select": "^2.4.17",
     "@heroui/skeleton": "^2.2.10",
+    "@heroui/snippet": "^2.2.18",
     "@heroui/spinner": "^2.2.13",
     "@heroui/switch": "^2.2.14",
     "@heroui/system": "^2.4.12",
@@ -52,9 +53,9 @@
   "devDependencies": {
     "@next/eslint-plugin-next": "15.0.4",
     "@react-types/shared": "3.25.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/node": "20.5.7",
     "@types/react": "18.3.3",
-    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/react-dom": "18.3.0",
     "@typescript-eslint/eslint-plugin": "8.11.0",
     "@typescript-eslint/parser": "8.11.0",

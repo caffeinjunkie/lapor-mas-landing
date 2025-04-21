@@ -29,6 +29,7 @@ import { Category } from "@/config/complaint-category";
 import useApi from "@/hooks/use-api";
 import { Report, ReportPayload } from "@/types/report.types";
 import { getUserPrompt } from "@/utils/prompts";
+import { ResultModal } from "@/components/modals/result-modal";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -45,6 +46,7 @@ export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
   const [isGeoLoading, setIsGeoLoading] = useState<boolean>(false);
+  const [trackingId, setTrackingId] = useState<string | null>(null);
   const {
     isOpen: isMandatoryModalOpen,
     onOpenChange: onMandatoryModalOpenChange,
@@ -187,6 +189,7 @@ export default function Home() {
       payload as ReportPayload,
       followUpQuestions,
       files,
+      setTrackingId,
       mutateReports,
       onAiModalClose,
       setIsSubmitLoading,
@@ -324,6 +327,15 @@ export default function Home() {
             currentStep={currentStep}
             onBack={onAiModalBack}
             onSubmit={onReportSubmit}
+          />
+          <ResultModal
+            isOpen={true}
+            trackingId={trackingId || "1234bb"}
+            onClose={() => {
+              reset();
+            }}
+            onOpenChange={() => {}}
+            t={t}
           />
           {isCameraOpen && (
             <Camera
