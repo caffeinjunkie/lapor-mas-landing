@@ -30,9 +30,11 @@ import useApi from "@/hooks/use-api";
 import { Report, ReportPayload } from "@/types/report.types";
 import { getUserPrompt } from "@/utils/prompts";
 import { ResultModal } from "@/components/modals/result-modal";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const t = useTranslations("HomePage");
+  const router = useRouter();
   const coordinates = getCoordinates();
   const [deviceReady, setDeviceReady] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -58,6 +60,12 @@ export default function Home() {
     onOpenChange: onAiModalOpenChange,
     onOpen: onAiModalOpen,
     onClose: onAiModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isResultModalOpen,
+    onOpenChange: onResultModalOpenChange,
+    onOpen: onResultModalOpen,
+    onClose: onResultModalClose,
   } = useDisclosure();
   const {
     data: aiResponse,
@@ -191,6 +199,7 @@ export default function Home() {
       files,
       setTrackingId,
       mutateReports,
+      onResultModalOpen,
       onAiModalClose,
       setIsSubmitLoading,
     );
@@ -210,7 +219,8 @@ export default function Home() {
     onAiModalOpen();
     setCurrentStep("ai-checking");
     saveTemporaryData({
-      ...dataFromEntries,
+      title: dataFromEntries.title,
+      description: dataFromEntries.description,
       category: selectedCategory?.key as string,
       address: {
         full_address: dataFromEntries.address,
@@ -329,12 +339,18 @@ export default function Home() {
             onSubmit={onReportSubmit}
           />
           <ResultModal
-            isOpen={true}
-            trackingId={trackingId || "1234bb"}
+            isOpen={isResultModalOpen}
+            trackingId={trackingId || ""}
             onClose={() => {
               reset();
+              onResultModalClose();
             }}
-            onOpenChange={() => {}}
+            onSubmit={() => {
+              reset();
+              onResultModalClose();
+              router.push(`/check-report?trackingId=${trackingId}`);
+            }}
+            onOpenChange={onResultModalOpenChange}
             t={t}
           />
           {isCameraOpen && (

@@ -6,6 +6,7 @@ interface ResultModalProps {
   isOpen: boolean;
   trackingId: string;
   onClose: () => void;
+  onSubmit: () => void;
   onOpenChange: (isOpen: boolean) => void;
   t: (key: string) => string;
 }
@@ -15,6 +16,7 @@ export const ResultModal = ({
   trackingId,
   onClose,
   onOpenChange,
+  onSubmit,
   t,
 }: ResultModalProps) => {
   return (
@@ -36,13 +38,13 @@ export const ResultModal = ({
               <p className="text-sm">
                 {t(`result-modal-subtitle`)}
               </p>
-              <Snippet size="lg">
+              <Snippet size="lg" symbol="" className="text-3xl">
                 {trackingId}
               </Snippet>
               <Button
                 color="primary"
                 className="w-full"
-                onPress={onClose}
+                onPress={onSubmit}
               >
                 {t(`result-modal-button-text`)}
               </Button>

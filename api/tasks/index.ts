@@ -51,7 +51,7 @@ export const createTask = async ({
 
   if (error) throw error;
 
-  return { data };
+  return trackingId;
 };
 
 export const fetchTasks = async () => {
@@ -76,5 +76,5 @@ export const fetchTaskByTrackingId = async (trackingId: string) => {
 
   if (error) throw error;
 
-  return { data };
+  return data;
 };

@@ -55,7 +55,7 @@ export const MandatoryModal = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col items-center gap-1">
-              {t(`complaint-form-${currentStep}-title`)}
+              {t(`complaint-modal-${currentStep}-title`)}
             </ModalHeader>
             <ModalBody className="gap-4 w-full flex flex-col justify-center items-center">
               {currentStep === "upload-form" && (

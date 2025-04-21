@@ -59,7 +59,7 @@ export const AIModal = ({
         {() => (
           <>
             <ModalHeader className="flex flex-col items-center gap-1">
-              {t(`complaint-form-${currentStep}-title`)}
+              {t(`complaint-modal-${currentStep}-title`)}
             </ModalHeader>
             <ModalBody className="gap-4 w-full pb-4 flex flex-col justify-center items-center">
               {!isLoading && isError && (
@@ -76,7 +76,7 @@ export const AIModal = ({
                     src="https://lottie.host/70f16a77-a19f-4ee6-8ce2-91de5e929c0d/aG88OC2gU9.lottie"
                   />
                   <p className="text-sm">
-                    {t(`complaint-form-ai-checking-subtitle`)}
+                    {t(`complaint-modal-ai-checking-subtitle`)}
                   </p>
                 </>
               )}
