@@ -14,7 +14,7 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { PhotoSlider } from "react-photo-view";
 import useSWR from "swr";
 
@@ -28,7 +28,15 @@ import { AchievementIcon } from "@/components/icons";
 import StarRating from "@/components/star-rating";
 import { Report } from "@/types/report.types";
 
-export default function CheckReportPage() {
+function SuspensedCheckReportPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <CheckReportPage />
+    </Suspense>
+  );
+}
+
+function CheckReportPage() {
   const t = useTranslations("CheckReportPage");
   const searchParams = useSearchParams();
   const trackingId = searchParams.get("trackingId");
@@ -42,7 +50,6 @@ export default function CheckReportPage() {
   >([]);
   const [isPhotoSliderOpen, setIsPhotoSliderOpen] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
-  const [isRatingLoading, setIsRatingLoading] = useState(false);
   const {
     data: report,
     error: reportError,
@@ -94,7 +101,6 @@ export default function CheckReportPage() {
   const onSubmitRating = async (rating: number) => {
     if (!report?.tracking_id) return;
     try {
-      setIsRatingLoading(true);
       await updateTaskByTrackingId(report?.tracking_id, { rating: rating * 2 });
       await mutate();
       addToast({
@@ -108,9 +114,7 @@ export default function CheckReportPage() {
         description: t("error-rating-subtitle"),
         color: "danger",
       });
-    } finally {
-      setIsRatingLoading(false);
-    }
+    }  
   };
 
   return (
@@ -281,3 +285,7 @@ export default function CheckReportPage() {
     </div>
   );
 }
+
+export default SuspensedCheckReportPage;
+
+SuspensedCheckReportPage.displayName = "SuspensedCheckReportPage";

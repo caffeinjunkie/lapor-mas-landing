@@ -383,3 +383,5 @@ export default function Home() {
     </section>
   );
 }
+
+Home.displayName = "Home";
