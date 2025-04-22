@@ -120,7 +120,7 @@ export default function CheckReportPage() {
           <Form onSubmit={onSubmit}>
             <Input
               type="text"
-              label="Tracking ID"
+              label={t("check-report-input-text")}
               defaultValue={trackingId || ""}
               name="tracking-id"
               id="tracking-id"
@@ -161,12 +161,7 @@ export default function CheckReportPage() {
                 </div>
               )}
             {report && (
-              <div
-                className={clsx(
-                  "flex flex-col gap-8 w-full",
-                  report.status === "COMPLETED" && "pb-20 sm:pb-16 lg:pb-4",
-                )}
-              >
+              <div className={clsx("flex flex-col gap-8 w-full")}>
                 <ReportDetail report={report as Report} />
                 <div
                   className={clsx(

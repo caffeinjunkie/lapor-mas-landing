@@ -82,7 +82,8 @@
     "error-rating-title": "Error",
     "error-rating-subtitle": "Terjadi kesalahan saat memberikan penilaian.",
     "success-rating-title": "Sukses Memberikan Penilaian",
-    "success-rating-subtitle": "Terima kasih telah memberikan penilaian."
+    "success-rating-subtitle": "Terima kasih telah memberikan penilaian.",
+    "check-report-input-text": "Tracking ID"
   },
   "Navbar": {
     "check-report-text": "Cek laporan mu disini!"
