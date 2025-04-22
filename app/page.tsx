@@ -5,6 +5,7 @@ import { useDisclosure } from "@heroui/modal";
 import { Skeleton } from "@heroui/skeleton";
 import { Spinner } from "@heroui/spinner";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 
@@ -24,13 +25,12 @@ import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Menu } from "@/components/menu";
 import { AIModal } from "@/components/modals/ai-modal";
 import { MandatoryModal } from "@/components/modals/mandatory-modal";
+import { ResultModal } from "@/components/modals/result-modal";
 import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import useApi from "@/hooks/use-api";
 import { Report, ReportPayload } from "@/types/report.types";
 import { getUserPrompt } from "@/utils/prompts";
-import { ResultModal } from "@/components/modals/result-modal";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
   const t = useTranslations("HomePage");

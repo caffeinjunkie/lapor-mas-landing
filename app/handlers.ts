@@ -18,7 +18,7 @@ export const deleteTemporaryData = () => {
 };
 
 export const getTemporaryData = () => {
-  const data = getFromSessionStorage("temporaryData")
+  const data = getFromSessionStorage("temporaryData");
   return data[data.length - 1];
 };
 
@@ -36,9 +36,9 @@ export const handleCreateTask = async (
   files: File[],
   setTrackingId: (trackingId: string) => void,
   mutateReports: KeyedMutator<Report[]>,
-  openResultModal: (  ) => void,
+  openResultModal: () => void,
   closeModal: () => void,
-  setIsSubmitLoading: (isLoading: boolean) => void
+  setIsSubmitLoading: (isLoading: boolean) => void,
 ) => {
   let imgUrls = [];
   setIsSubmitLoading(true);
@@ -51,7 +51,7 @@ export const handleCreateTask = async (
       }
     }
 
-    const response = await createTask({
+    const response = (await createTask({
       title: payload.title,
       description: payload.description,
       category: payload.category,
@@ -59,8 +59,8 @@ export const handleCreateTask = async (
       priority: payload.priority,
       address: payload.address,
       images: imgUrls,
-    }) as string;
-    setTrackingId(response)
+    })) as string;
+    setTrackingId(response);
     await mutateReports();
   } catch (error) {
     console.error(error);

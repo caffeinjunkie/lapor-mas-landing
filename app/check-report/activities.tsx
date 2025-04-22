@@ -18,11 +18,7 @@ interface ActivitiesProps {
   onImagePress: (images: { src: string; key: string }[], index: number) => void;
 }
 
-export const Activities = ({
-  data,
-  users,
-  onImagePress,
-}: ActivitiesProps) => {
+export const Activities = ({ data, users, onImagePress }: ActivitiesProps) => {
   const getUserById = (id: string) => {
     return users.find((user) => user.user_id === id);
   };

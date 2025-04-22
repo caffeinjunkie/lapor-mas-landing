@@ -8,9 +8,9 @@ import { Chip } from "@heroui/chip";
 import clsx from "clsx";
 import { useTranslations } from "next-intl";
 
-import { PriorityChipColor, StatusChipColor } from "@/config/report";
 import { Description } from "@/app/check-report/description";
 import { Info } from "@/app/check-report/info";
+import { PriorityChipColor, StatusChipColor } from "@/config/report";
 import { Report } from "@/types/report.types";
 import { formatLocaleDate } from "@/utils/date";
 
@@ -26,11 +26,13 @@ export const ReportDetail = ({ report, className }: ReportDetailProps) => {
   const { category, priority, status } = report || {};
   const categoryLabel = t(`category-${category}-text`);
   const priorityLabel = t(`priority-${priority?.toLowerCase()}-text`);
-  const statusLabel = t(`status-${status?.replaceAll("_", "-").toLowerCase()}-text`);
+  const statusLabel = t(
+    `status-${status?.replaceAll("_", "-").toLowerCase()}-text`,
+  );
 
   return (
     <div className="gap-2 flex flex-col">
-    <p className="text-xl font-bold">{report.title}</p>
+      <p className="text-xl font-bold">{report.title}</p>
       <div
         className={clsx(
           "flex flex-wrap space-x-0 gap-x-4 gap-y-2 sm:flex-col sm:gap-y-5 pb-3 pt-1 sm:pt-2",

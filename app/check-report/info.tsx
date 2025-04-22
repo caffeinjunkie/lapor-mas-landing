@@ -1,7 +1,8 @@
-import { IconSvgProps } from "@/types";
 import { Tooltip } from "@heroui/tooltip";
 import clsx from "clsx";
 import { useTranslations } from "next-intl";
+
+import { IconSvgProps } from "@/types";
 
 interface InfoProps extends React.PropsWithChildren {
   Icon: (props: IconSvgProps) => React.ReactNode;
@@ -15,10 +16,7 @@ export const Info = ({ Icon, label, children, className }: InfoProps) => {
     <div className={clsx("flex flex-row gap-1 w-fit", className)}>
       <div className="flex flex-row gap-1 items-center w-fit sm:w-32">
         <Icon className="w-4 h-4 text-default-500 hidden sm:block" />
-        <Tooltip
-          className="block sm:hidden"
-          content={t(`${label}-info-label`)}
-        >
+        <Tooltip className="block sm:hidden" content={t(`${label}-info-label`)}>
           <Icon className="block sm:hidden w-4 h-4 text-default-500" />
         </Tooltip>
         <p className="text-xs text-default-500 hidden sm:block">

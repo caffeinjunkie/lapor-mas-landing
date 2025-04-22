@@ -35,17 +35,11 @@ export const ResultModal = ({
               {t(`result-modal-title`)}
             </ModalHeader>
             <ModalBody className="gap-4 w-full pb-4 flex flex-col justify-center items-center">
-              <p className="text-sm">
-                {t(`result-modal-subtitle`)}
-              </p>
+              <p className="text-sm">{t(`result-modal-subtitle`)}</p>
               <Snippet size="lg" symbol="" className="text-3xl">
                 {trackingId}
               </Snippet>
-              <Button
-                color="primary"
-                className="w-full"
-                onPress={onSubmit}
-              >
+              <Button color="primary" className="w-full" onPress={onSubmit}>
                 {t(`result-modal-button-text`)}
               </Button>
             </ModalBody>

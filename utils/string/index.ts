@@ -5,6 +5,4 @@ const getByteSize = (size: number) => {
   return (size / 1048576).toFixed(2) + "MB";
 };
 
-export {
-  getByteSize,
-};
+export { getByteSize };

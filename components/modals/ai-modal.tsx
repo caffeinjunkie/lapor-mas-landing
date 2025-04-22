@@ -34,10 +34,9 @@ export const AIModal = ({
   onBack,
   onSubmit,
 }: AIModalProps) => {
-  const isReportValid =
-    (isNonCriticalType
-      ? (aiResponse?.validityScore ?? 0) >= 70
-      : (aiResponse?.validityScore ?? 0) >= 80);
+  const isReportValid = isNonCriticalType
+    ? (aiResponse?.validityScore ?? 0) >= 70
+    : (aiResponse?.validityScore ?? 0) >= 80;
 
   const message =
     aiResponse?.isSpam || false
@@ -83,8 +82,12 @@ export const AIModal = ({
               {currentStep === "ai-checked" && !isLoading && aiResponse && (
                 <div className="flex flex-col w-full items-center gap-4">
                   {aiResponse.isSpam && <SpamIcon size={56} />}
-                  {!isReportValid && !aiResponse.isSpam && <InvalidReportIcon size={56} />}
-                  {isReportValid && !aiResponse.isSpam && <ValidReportIcon size={56} />}
+                  {!isReportValid && !aiResponse.isSpam && (
+                    <InvalidReportIcon size={56} />
+                  )}
+                  {isReportValid && !aiResponse.isSpam && (
+                    <ValidReportIcon size={56} />
+                  )}
                   <p className="font-semibold text-sm text-center">{message}</p>
                   {(!isReportValid || aiResponse.isSpam) && (
                     <Button
