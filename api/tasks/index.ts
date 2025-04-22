@@ -51,7 +51,7 @@ export const createTask = async ({
 
   if (error) throw error;
 
-  return { data };
+  return trackingId;
 };
 
 export const fetchTasks = async () => {
@@ -76,5 +76,20 @@ export const fetchTaskByTrackingId = async (trackingId: string) => {
 
   if (error) throw error;
 
-  return { data };
+  return data;
+};
+
+export const updateTaskByTrackingId = async (
+  trackingId: string,
+  data: Record<string, unknown>,
+) => {
+  const { data: updatedData, error } = await supabase
+    .from("tasks")
+    .update(data)
+    .eq("tracking_id", trackingId)
+    .single();
+
+  if (error) throw error;
+
+  return { data: updatedData };
 };

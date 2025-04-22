@@ -5,6 +5,7 @@ import { useDisclosure } from "@heroui/modal";
 import { Skeleton } from "@heroui/skeleton";
 import { Spinner } from "@heroui/spinner";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 
@@ -24,6 +25,7 @@ import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Menu } from "@/components/menu";
 import { AIModal } from "@/components/modals/ai-modal";
 import { MandatoryModal } from "@/components/modals/mandatory-modal";
+import { ResultModal } from "@/components/modals/result-modal";
 import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import useApi from "@/hooks/use-api";
@@ -32,6 +34,7 @@ import { getUserPrompt } from "@/utils/prompts";
 
 export default function Home() {
   const t = useTranslations("HomePage");
+  const router = useRouter();
   const coordinates = getCoordinates();
   const [deviceReady, setDeviceReady] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -45,6 +48,9 @@ export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
   const [isGeoLoading, setIsGeoLoading] = useState<boolean>(false);
+  const [trackingId, setTrackingId] = useState<string | null>(null);
+  const [isMapPinpointLoaded, setIsMapPinpointLoaded] =
+    useState<boolean>(false);
   const {
     isOpen: isMandatoryModalOpen,
     onOpenChange: onMandatoryModalOpenChange,
@@ -56,6 +62,12 @@ export default function Home() {
     onOpenChange: onAiModalOpenChange,
     onOpen: onAiModalOpen,
     onClose: onAiModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isResultModalOpen,
+    onOpenChange: onResultModalOpenChange,
+    onOpen: onResultModalOpen,
+    onClose: onResultModalClose,
   } = useDisclosure();
   const {
     data: aiResponse,
@@ -119,6 +131,12 @@ export default function Home() {
   useEffect(() => {
     setLocation();
   }, []);
+
+  useEffect(() => {
+    if (!isMapLoading && !isGeoLoading) {
+      setIsMapPinpointLoaded(true);
+    }
+  }, [isMapLoading, isGeoLoading]);
 
   useEffect(() => {
     if (!isMandatoryModalOpen) {
@@ -187,7 +205,9 @@ export default function Home() {
       payload as ReportPayload,
       followUpQuestions,
       files,
+      setTrackingId,
       mutateReports,
+      onResultModalOpen,
       onAiModalClose,
       setIsSubmitLoading,
     );
@@ -207,7 +227,8 @@ export default function Home() {
     onAiModalOpen();
     setCurrentStep("ai-checking");
     saveTemporaryData({
-      ...dataFromEntries,
+      title: dataFromEntries.title,
+      description: dataFromEntries.description,
       category: selectedCategory?.key as string,
       address: {
         full_address: dataFromEntries.address,
@@ -253,10 +274,7 @@ export default function Home() {
 
   return (
     <section className="flex flex-col items-center pt-2 min-h-72">
-      <Skeleton
-        className="rounded-lg"
-        isLoaded={!isMapLoading && !isGeoLoading}
-      >
+      <Skeleton className="rounded-lg" isLoaded={isMapPinpointLoaded}>
         <Button
           color={mapData?.data ? "default" : "warning"}
           startContent={mapData?.data ? <MapIcon /> : <RefreshIcon />}
@@ -325,6 +343,21 @@ export default function Home() {
             onBack={onAiModalBack}
             onSubmit={onReportSubmit}
           />
+          <ResultModal
+            isOpen={isResultModalOpen}
+            trackingId={trackingId || ""}
+            onClose={() => {
+              reset();
+              onResultModalClose();
+            }}
+            onSubmit={() => {
+              reset();
+              onResultModalClose();
+              router.push(`/check-report?trackingId=${trackingId}`);
+            }}
+            onOpenChange={onResultModalOpenChange}
+            t={t}
+          />
           {isCameraOpen && (
             <Camera
               onClose={() => setIsCameraOpen(false)}
@@ -350,3 +383,5 @@ export default function Home() {
     </section>
   );
 }
+
+Home.displayName = "Home";

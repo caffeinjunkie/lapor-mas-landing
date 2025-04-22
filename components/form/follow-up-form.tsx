@@ -18,7 +18,7 @@ export const FollowUpForm = ({
 }: FollowUpFormProps) => {
   const t = useTranslations("FollowUpForm");
   return (
-    <Form onSubmit={onSubmit} className="w-full py-4 gap-8">
+    <Form onSubmit={onSubmit} className="w-full pt-4 gap-8">
       <div className="flex flex-col gap-4 w-full">
         {questions.map((question) => (
           <Textarea
@@ -35,7 +35,7 @@ export const FollowUpForm = ({
           />
         ))}
       </div>
-      <div className="flex flex-row w-full gap-2 justify-between pb-2">
+      <div className="flex flex-row w-full gap-2 justify-between">
         <Button
           className="w-full"
           color="danger"

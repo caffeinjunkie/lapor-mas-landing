@@ -34,10 +34,9 @@ export const AIModal = ({
   onBack,
   onSubmit,
 }: AIModalProps) => {
-  const isReportValid =
-    (isNonCriticalType
-      ? (aiResponse?.validityScore ?? 0) >= 70
-      : (aiResponse?.validityScore ?? 0) >= 80);
+  const isReportValid = isNonCriticalType
+    ? (aiResponse?.validityScore ?? 0) >= 70
+    : (aiResponse?.validityScore ?? 0) >= 80;
 
   const message =
     aiResponse?.isSpam || false
@@ -59,7 +58,7 @@ export const AIModal = ({
         {() => (
           <>
             <ModalHeader className="flex flex-col items-center gap-1">
-              {t(`complaint-form-${currentStep}-title`)}
+              {t(`complaint-modal-${currentStep}-title`)}
             </ModalHeader>
             <ModalBody className="gap-4 w-full pb-4 flex flex-col justify-center items-center">
               {!isLoading && isError && (
@@ -76,15 +75,19 @@ export const AIModal = ({
                     src="https://lottie.host/70f16a77-a19f-4ee6-8ce2-91de5e929c0d/aG88OC2gU9.lottie"
                   />
                   <p className="text-sm">
-                    {t(`complaint-form-ai-checking-subtitle`)}
+                    {t(`complaint-modal-ai-checking-subtitle`)}
                   </p>
                 </>
               )}
               {currentStep === "ai-checked" && !isLoading && aiResponse && (
                 <div className="flex flex-col w-full items-center gap-4">
                   {aiResponse.isSpam && <SpamIcon size={56} />}
-                  {!isReportValid && !aiResponse.isSpam && <InvalidReportIcon size={56} />}
-                  {isReportValid && !aiResponse.isSpam && <ValidReportIcon size={56} />}
+                  {!isReportValid && !aiResponse.isSpam && (
+                    <InvalidReportIcon size={56} />
+                  )}
+                  {isReportValid && !aiResponse.isSpam && (
+                    <ValidReportIcon size={56} />
+                  )}
                   <p className="font-semibold text-sm text-center">{message}</p>
                   {(!isReportValid || aiResponse.isSpam) && (
                     <Button

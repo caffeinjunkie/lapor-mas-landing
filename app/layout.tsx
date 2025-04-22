@@ -3,6 +3,7 @@ import { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { Fira_Code as FontMono, Manrope as FontSans } from "next/font/google";
+import "react-photo-view/dist/react-photo-view.css";
 
 import { Providers } from "./providers";
 
@@ -52,7 +53,7 @@ export default async function RootLayout({
     <html suppressHydrationWarning lang={locale}>
       <head>
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>Lapor Mas Wapres</title>
+        <title>LaporID</title>
       </head>
       <body
         className={clsx(
