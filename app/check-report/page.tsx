@@ -7,7 +7,9 @@ import { Form } from "@heroui/form";
 import { Image } from "@heroui/image";
 import { Input } from "@heroui/input";
 import { Skeleton } from "@heroui/skeleton";
+import { Spinner } from "@heroui/spinner";
 import { Tab, Tabs } from "@heroui/tabs";
+import { addToast } from "@heroui/toast";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -20,7 +22,10 @@ import { Activities } from "./activities";
 import { appendParams, isEmptyError } from "./handlers";
 import { ReportDetail } from "./report-detail";
 
-import { fetchTaskByTrackingId } from "@/api/tasks";
+import { fetchAllAdmins } from "@/api/admin";
+import { fetchTaskByTrackingId, updateTaskByTrackingId } from "@/api/tasks";
+import { AchievementIcon } from "@/components/icons";
+import StarRating from "@/components/star-rating";
 import { Report } from "@/types/report.types";
 
 export default function CheckReportPage() {
@@ -37,14 +42,24 @@ export default function CheckReportPage() {
   >([]);
   const [isPhotoSliderOpen, setIsPhotoSliderOpen] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [isRatingLoading, setIsRatingLoading] = useState(false);
   const {
     data: report,
-    error: error,
-    isValidating: isLoading,
+    error: reportError,
+    isValidating: isReportLoading,
     mutate: mutate,
   } = useSWR<Report>(
     ["report", trackingId],
     () => trackingId && (fetchTaskByTrackingId(trackingId) as any),
+    {
+      dedupingInterval: 60000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    },
+  );
+  const { data: admins, isValidating: isAdminsLoading } = useSWR(
+    "admins",
+    () => fetchAllAdmins() as any,
     {
       dedupingInterval: 60000,
       revalidateOnFocus: false,
@@ -76,6 +91,28 @@ export default function CheckReportPage() {
       key: `image-${index + 1}`,
     })) || [];
 
+  const onSubmitRating = async (rating: number) => {
+    if (!report?.tracking_id) return;
+    try {
+      setIsRatingLoading(true);
+      await updateTaskByTrackingId(report?.tracking_id, { rating: rating * 2 });
+      await mutate();
+      addToast({
+        title: t("success-rating-title"),
+        description: t("success-rating-subtitle"),
+        color: "success",
+      });
+    } catch (error) {
+      addToast({
+        title: t("error-rating-title"),
+        description: t("error-rating-subtitle"),
+        color: "danger",
+      });
+    } finally {
+      setIsRatingLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-col lg:flex-row gap-8 w-full">
@@ -93,7 +130,10 @@ export default function CheckReportPage() {
             </Button>
           </Form>
         </div>
-        <Skeleton isLoaded={!isLoading} className="w-full h-full rounded-xl">
+        <Skeleton
+          isLoaded={!isReportLoading}
+          className="w-full h-full rounded-xl"
+        >
           <div className="flex flex-col w-full">
             {!report && !trackingId && (
               <div className="min-h-64 lg:h-full rounded-xl bg-gray-400/10 flex items-center justify-center">
@@ -105,21 +145,28 @@ export default function CheckReportPage() {
                 <p>{t("check-report-empty-text")}</p>
               </div>
             )}
-            {error && !isEmptyError(error as unknown) && trackingId && (
-              <div className="min-h-64 lg:h-full rounded-xl bg-gray-400/10 flex flex-col gap-3 justify-center items-center">
-                <p>{t("check-report-error-text")}</p>
-                <Button
-                  color="primary"
-                  className="w-fit"
-                  startContent={<ArrowPathIcon className="w-5 h-5" />}
-                  onPress={() => mutate()}
-                >
-                  {t("check-report-try-again-text")}
-                </Button>
-              </div>
-            )}
+            {reportError &&
+              !isEmptyError(reportError as unknown) &&
+              trackingId && (
+                <div className="min-h-64 lg:h-full rounded-xl bg-gray-400/10 flex flex-col gap-3 justify-center items-center">
+                  <p>{t("check-report-error-text")}</p>
+                  <Button
+                    color="primary"
+                    className="w-fit"
+                    startContent={<ArrowPathIcon className="w-5 h-5" />}
+                    onPress={() => mutate()}
+                  >
+                    {t("check-report-try-again-text")}
+                  </Button>
+                </div>
+              )}
             {report && (
-              <div className="flex flex-col gap-8 w-full">
+              <div
+                className={clsx(
+                  "flex flex-col gap-8 w-full",
+                  report.status === "COMPLETED" && "pb-20 sm:pb-16 lg:pb-4",
+                )}
+              >
                 <ReportDetail report={report as Report} />
                 <div
                   className={clsx(
@@ -138,11 +185,14 @@ export default function CheckReportPage() {
                     className="font-semibold"
                   >
                     <Tab value="activities" title={t("activities-tab-text")}>
-                      <Activities
-                        data={report?.progress || []}
-                        onImagePress={onImagePress}
-                        users={[]}
-                      />
+                      {isAdminsLoading && <Spinner />}
+                      {!isAdminsLoading && (
+                        <Activities
+                          data={report?.progress || []}
+                          onImagePress={onImagePress}
+                          users={admins?.data || []}
+                        />
+                      )}
                     </Tab>
                     <Tab value="attachments" title={t("attachments-tab-text")}>
                       {reportImages.length === 0 && (
@@ -192,6 +242,40 @@ export default function CheckReportPage() {
           </div>
         </Skeleton>
       </div>
+      {report?.status === "COMPLETED" && (
+        <Skeleton isLoaded={!isReportLoading} className="min-h-16 w-full">
+          <div className="fixed bottom-0 left-0 right-0 w-full bg-success z-40 flex flex-col lg:flex-row items-center justify-center p-4 gap-4">
+            <div className="flex flex-row gap-2 items-center">
+              <AchievementIcon className="flex w-8 h-8 md:w-5 md:h-5" />
+              {Number(report?.rating) === 0 && (
+                <p className="flex flex-1 text-sm text-white">
+                  {t("rate-report-text")}
+                </p>
+              )}
+              {Number(report?.rating) > 8 && (
+                <p className="flex flex-1 text-sm text-white">
+                  {t("good-rating-report-text")}
+                </p>
+              )}
+              {Number(report?.rating) <= 8 && Number(report?.rating) >= 6 && (
+                <p className="flex flex-1 text-sm text-white">
+                  {t("okay-rating-report-text")}
+                </p>
+              )}
+              {Number(report?.rating) < 6 && Number(report?.rating) > 0 && (
+                <p className="flex flex-1 text-sm text-white">
+                  {t("bad-rating-report-text")}
+                </p>
+              )}
+            </div>
+            <StarRating
+              rating={Number(report?.rating || 0) / 2}
+              setRating={onSubmitRating}
+              disabled={isReportLoading || Number(report?.rating) !== 0}
+            />
+          </div>
+        </Skeleton>
+      )}
       <PhotoSlider
         images={sliderImages}
         index={imageIndex}

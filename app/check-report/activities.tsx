@@ -20,7 +20,7 @@ interface ActivitiesProps {
 
 export const Activities = ({ data, users, onImagePress }: ActivitiesProps) => {
   const getUserById = (id: string) => {
-    return users.find((user) => user.user_id === id);
+    return users?.find((user) => user.user_id === id);
   };
 
   const t = useTranslations("CheckReportPage");
@@ -33,6 +33,14 @@ export const Activities = ({ data, users, onImagePress }: ActivitiesProps) => {
   const onPressAttachment = (img: string) => {
     onImagePress([{ src: img, key: "0" }], 0);
   };
+
+  if (!data?.length) {
+    return (
+      <div className="flex items-center justify-center text-sm text-default-500 min-h-32">
+        {t("no-activities-text")}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">

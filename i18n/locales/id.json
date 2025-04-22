@@ -66,14 +66,23 @@
     "status-pending-text": "Menunggu",
     "priority-critical-text": "Kritis",
     "priority-high-text": "Tinggi",
-    "priority-medium-text": "Sedang",
+    "priority-mid-text": "Sedang",
     "priority-low-text": "Rendah",
     "activities-tab-text": "Aktivitas",
     "attachments-tab-text": "Lampiran",
     "no-attachments-text": "Tidak ada lampiran",
     "activity-accepted-text": "<bold>{user}</bold> menerima laporan.",
     "activity-in-progress-text": "<bold>{user}</bold> memproses laporan dengan komentar <bold>{message}</bold>.",
-    "activity-completed-text": "<bold>{user}</bold> menyelesaikan laporan dengan komentar <bold>{message}</bold>."
+    "activity-completed-text": "<bold>{user}</bold> menyelesaikan laporan dengan komentar <bold>{message}</bold>.",
+    "no-activities-text": "Belum ada perkembangan laporan.",
+    "rate-report-text": "Laporan Anda telah selesai, mohon berikan penilaian agar kami dapat meningkatkan kualitas layanan.",
+    "good-rating-report-text": "Terima kasih telah memberikan penilaian. Kami akan terus menjaga kualitas layanan kami.",
+    "okay-rating-report-text": "Terima kasih telah memberikan penilaian. Kami harap anda puas dengan pelayanan kami.",
+    "bad-rating-report-text": "Terima kasih telah memberikan penilaian. Kami akan terus meningkatkan kualitas layanan kami.",
+    "error-rating-title": "Error",
+    "error-rating-subtitle": "Terjadi kesalahan saat memberikan penilaian.",
+    "success-rating-title": "Sukses Memberikan Penilaian",
+    "success-rating-subtitle": "Terima kasih telah memberikan penilaian."
   },
   "Navbar": {
     "check-report-text": "Cek laporan mu disini!"

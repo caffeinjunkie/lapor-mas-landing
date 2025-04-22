@@ -49,6 +49,8 @@ export default function Home() {
   const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
   const [isGeoLoading, setIsGeoLoading] = useState<boolean>(false);
   const [trackingId, setTrackingId] = useState<string | null>(null);
+  const [isMapPinpointLoaded, setIsMapPinpointLoaded] =
+    useState<boolean>(false);
   const {
     isOpen: isMandatoryModalOpen,
     onOpenChange: onMandatoryModalOpenChange,
@@ -129,6 +131,12 @@ export default function Home() {
   useEffect(() => {
     setLocation();
   }, []);
+
+  useEffect(() => {
+    if (!isMapLoading && !isGeoLoading) {
+      setIsMapPinpointLoaded(true);
+    }
+  }, [isMapLoading, isGeoLoading]);
 
   useEffect(() => {
     if (!isMandatoryModalOpen) {
@@ -266,10 +274,7 @@ export default function Home() {
 
   return (
     <section className="flex flex-col items-center pt-2 min-h-72">
-      <Skeleton
-        className="rounded-lg"
-        isLoaded={!isMapLoading && !isGeoLoading}
-      >
+      <Skeleton className="rounded-lg" isLoaded={isMapPinpointLoaded}>
         <Button
           color={mapData?.data ? "default" : "warning"}
           startContent={mapData?.data ? <MapIcon /> : <RefreshIcon />}

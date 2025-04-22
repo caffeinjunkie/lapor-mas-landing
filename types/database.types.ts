@@ -47,40 +47,6 @@ export type Database = {
           user_id: string;
           is_hidden: boolean;
         };
-        Insert: {
-          display_name?: string;
-          email?: string;
-          profile_img?: string;
-          is_super_admin?: boolean;
-          is_verified?: boolean;
-          rating?: number;
-          user_id?: string;
-        };
-        Update: {
-          display_name?: string;
-          email?: string;
-          profile_img?: string;
-          is_super_admin?: boolean;
-          is_verified?: boolean;
-          rating?: number;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
-      app_config: {
-        Row: {
-          id: number;
-          org_name: string;
-          timezone: string;
-        };
-        Insert: {
-          org_name?: string;
-          timezone?: string;
-        };
-        Update: {
-          org_name?: string;
-          timezone?: string;
-        };
         Relationships: [];
       };
       tasks: {
@@ -131,15 +97,6 @@ export type Database = {
           status?: Database["public"]["Enums"]["task_status"] | null;
           title?: string;
           tracking_id?: string;
-        };
-        Relationships: [];
-      };
-      timezones: {
-        Row: {
-          id: number;
-          zone: string;
-          key: string;
-          utc: number;
         };
         Relationships: [];
       };
