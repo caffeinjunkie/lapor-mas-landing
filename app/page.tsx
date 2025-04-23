@@ -14,6 +14,7 @@ import {
   getCoordinates,
   getTemporaryData,
   handleCreateTask,
+  handleInternalChecking,
   saveCoordinates,
   saveTemporaryData,
 } from "./handlers";
@@ -23,7 +24,7 @@ import { fetchTasks } from "@/api/tasks";
 import { Camera } from "@/components/form/camera";
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Menu } from "@/components/menu";
-import { AIModal } from "@/components/modals/ai-modal";
+import { CheckingModal } from "@/components/modals/checking-modal";
 import { MandatoryModal } from "@/components/modals/mandatory-modal";
 import { ResultModal } from "@/components/modals/result-modal";
 import { ReportList } from "@/components/report";
@@ -58,10 +59,10 @@ export default function Home() {
     onClose: onMandatoryModalClose,
   } = useDisclosure();
   const {
-    isOpen: isAiModalOpen,
-    onOpenChange: onAiModalOpenChange,
-    onOpen: onAiModalOpen,
-    onClose: onAiModalClose,
+    isOpen: isCheckingModalOpen,
+    onOpenChange: onCheckingModalOpenChange,
+    onOpen: onCheckingModalOpen,
+    onClose: onCheckingModalClose,
   } = useDisclosure();
   const {
     isOpen: isResultModalOpen,
@@ -147,7 +148,13 @@ export default function Home() {
   }, [isMandatoryModalOpen]);
 
   useEffect(() => {
-    if (aiResponse && !aiLoading) {
+    if (aiResponse && aiResponse.externalIssue && !aiLoading) {
+      setCurrentStep(
+        `external-issue-${aiResponse.externalIssue.toLowerCase().replaceAll("_", "-")}`,
+      );
+      return;
+    }
+    if (aiResponse && !aiResponse.externalIssue && !aiLoading) {
       setCurrentStep("ai-checked");
 
       const isNonCritical = selectedCategory?.key === "lainnya";
@@ -208,14 +215,30 @@ export default function Home() {
       setTrackingId,
       mutateReports,
       onResultModalOpen,
-      onAiModalClose,
+      onCheckingModalClose,
       setIsSubmitLoading,
     );
   };
 
-  const onOpenAICheck = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onCheckReport = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
+    const reportContext = handleInternalChecking(
+      dataFromEntries.title as string,
+      dataFromEntries.description as string,
+    );
+    onMandatoryModalClose();
+    onCheckingModalOpen();
+    if (reportContext === "UNKNOWN") {
+      handleAICheck(dataFromEntries as Record<string, string>);
+      return;
+    }
+    setCurrentStep(
+      `external-issue-${reportContext.toLowerCase().replaceAll("_", "-")}`,
+    );
+  };
+
+  const handleAICheck = async (dataFromEntries: Record<string, string>) => {
     const submitValue = getUserPrompt(
       dataFromEntries.title as string,
       (dataFromEntries.description as string) ||
@@ -223,8 +246,6 @@ export default function Home() {
       dataFromEntries.category as string,
       dataFromEntries.address as string,
     );
-    onMandatoryModalClose();
-    onAiModalOpen();
     setCurrentStep("ai-checking");
     saveTemporaryData({
       title: dataFromEntries.title,
@@ -246,9 +267,9 @@ export default function Home() {
     setIsCameraOpen(false);
   };
 
-  const onAiModalBack = () => {
+  const onCheckingModalBack = () => {
     setCurrentStep("info-form");
-    onAiModalClose();
+    onCheckingModalClose();
     onMandatoryModalOpen();
   };
 
@@ -315,7 +336,7 @@ export default function Home() {
             onOpenChange={onMandatoryModalOpenChange}
             t={t}
             currentStep={currentStep}
-            onSubmit={onOpenAICheck}
+            onSubmit={onCheckReport}
             address={address}
             isCategoryLocked={isCategoryLocked}
             setCurrentStep={setCurrentStep}
@@ -325,22 +346,22 @@ export default function Home() {
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
           />
-          <AIModal
-            isOpen={isAiModalOpen}
+          <CheckingModal
+            isOpen={isCheckingModalOpen}
             isSubmitLoading={isSubmitLoading}
             onClose={() => {
               reset();
               deleteTemporaryData();
-              onAiModalClose();
+              onCheckingModalClose();
             }}
-            onOpenChange={onAiModalOpenChange}
+            onOpenChange={onCheckingModalOpenChange}
             t={t}
             isError={aiError}
             isNonCriticalType={selectedCategory?.key === "lainnya"}
             aiResponse={aiResponse}
             isLoading={aiLoading}
             currentStep={currentStep}
-            onBack={onAiModalBack}
+            onBack={onCheckingModalBack}
             onSubmit={onReportSubmit}
           />
           <ResultModal
@@ -366,7 +387,7 @@ export default function Home() {
               setDeviceReady={setDeviceReady}
             />
           )}
-          <div className="w-full fixed flex justify-center bottom-0 pt-4 pb-10 left-0">
+          <div className="w-full fixed flex justify-center bottom-0 pt-4 pb-7 left-0">
             <Button
               color="primary"
               radius="full"

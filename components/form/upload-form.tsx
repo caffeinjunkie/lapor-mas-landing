@@ -65,6 +65,7 @@ export const UploadForm = ({
           className="w-full bg-white/10"
           onPress={() => imageInputRef.current?.click()}
           isPressable
+          radius="sm"
           isDisabled={files.length > 2}
         >
           <CardBody className="flex flex-col items-center gap-2">
@@ -75,6 +76,7 @@ export const UploadForm = ({
         <Card
           className="w-full bg-white/10"
           isPressable
+          radius="sm"
           onPress={onCameraOpen}
           isDisabled={files.length > 2}
         >

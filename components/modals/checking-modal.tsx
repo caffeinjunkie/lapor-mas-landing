@@ -5,11 +5,11 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { FollowUpForm } from "../form/follow-up-form";
 import { InvalidReportIcon, SpamIcon, ValidReportIcon } from "../icons";
 
-interface AIModalProps {
+interface CheckingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenChange: (isOpen: boolean) => void;
-  t: (key: string) => string;
+  t: (key: string, options?: { [key: string]: string }) => string;
   isNonCriticalType: boolean;
   aiResponse: AIResponseType;
   isLoading: boolean;
@@ -20,7 +20,7 @@ interface AIModalProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
-export const AIModal = ({
+export const CheckingModal = ({
   isOpen,
   onClose,
   onOpenChange,
@@ -33,10 +33,14 @@ export const AIModal = ({
   isError,
   onBack,
   onSubmit,
-}: AIModalProps) => {
+}: CheckingModalProps) => {
   const isReportValid = isNonCriticalType
     ? (aiResponse?.validityScore ?? 0) >= 70
     : (aiResponse?.validityScore ?? 0) >= 80;
+
+  const name = currentStep.includes("external-issue")
+    ? "external-issue"
+    : currentStep;
 
   const message =
     aiResponse?.isSpam || false
@@ -58,7 +62,7 @@ export const AIModal = ({
         {() => (
           <>
             <ModalHeader className="flex flex-col items-center gap-1">
-              {t(`complaint-modal-${currentStep}-title`)}
+              {t(`complaint-modal-${name}-title`)}
             </ModalHeader>
             <ModalBody className="gap-4 w-full pb-4 flex flex-col justify-center items-center">
               {!isLoading && isError && (
@@ -78,6 +82,23 @@ export const AIModal = ({
                     {t(`complaint-modal-ai-checking-subtitle`)}
                   </p>
                 </>
+              )}
+              {currentStep.includes("external-issue") && (
+                <div className="flex flex-col w-full items-center gap-2">
+                  <p className="text-sm text-center">
+                    {t("complaint-modal-external-issue-subtitle", {
+                      extra: t(`${currentStep}-text`),
+                    })}
+                  </p>
+                  <Button
+                    color="primary"
+                    variant="light"
+                    className="w-full mt-2"
+                    onPress={onBack}
+                  >
+                    {t("create-report-back-text")}
+                  </Button>
+                </div>
               )}
               {currentStep === "ai-checked" && !isLoading && aiResponse && (
                 <div className="flex flex-col w-full items-center gap-4">
