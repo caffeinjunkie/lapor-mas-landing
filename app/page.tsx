@@ -387,7 +387,7 @@ export default function Home() {
               setDeviceReady={setDeviceReady}
             />
           )}
-          <div className="w-full fixed flex justify-center bottom-0 pt-4 pb-10 left-0">
+          <div className="w-full fixed flex justify-center bottom-0 pt-4 pb-7 left-0">
             <Button
               color="primary"
               radius="full"
