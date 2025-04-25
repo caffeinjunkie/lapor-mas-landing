@@ -37,11 +37,6 @@ LaporID Citizen Reporting Web App is an AI based citizen reporting platform that
 4. Submit the report.
 5. View submitted reports.
 
-### Future Enhancements
-
-- Implement more detailed view of the report.
-- Add status tracking for each report (Pending, In Progress, Resolved).
-
 ## Technologies Used
 
 - [Next.js 14](https://nextjs.org/docs/getting-started)
