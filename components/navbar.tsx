@@ -33,7 +33,7 @@ export const Navbar = () => {
             href="/"
             onClick={() => setNavbarOpen(false)}
           >
-            <Logo width={120} />
+            <Logo width={120} animated />
           </NextLink>
         </NavbarBrand>
         <NavbarItem>
