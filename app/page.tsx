@@ -32,6 +32,9 @@ import { Category } from "@/config/complaint-category";
 import useApi from "@/hooks/use-api";
 import { Report, ReportPayload } from "@/types/report.types";
 import { getUserPrompt } from "@/utils/prompts";
+import { fetchAnnouncements } from "@/api/announcements";
+import Carousel from "@/components/carousel";
+import { Announcement } from "@/types/announcement.types";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -76,6 +79,15 @@ export default function Home() {
     loading: aiLoading,
     fetchData: fetchAiData,
   } = useApi();
+  const {
+    data: annoucements,
+    error: annoucementsError,
+    isValidating: isAnnoucementsLoading,
+  } = useSWR<Announcement[]>(["annoucements"], fetchAnnouncements as any, {
+    dedupingInterval: 60000,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   const {
     data: publicReports,
@@ -309,6 +321,16 @@ export default function Home() {
               : t("fetch-location-refresh-text")}
         </Button>
       </Skeleton>
+      {!isAnnoucementsLoading && annoucements && !annoucementsError && annoucements.length > 0 && (
+        <div className="w-full flex min-h-48 px-8 py-2">
+          <Carousel images={annoucements?.map((item: Announcement) => {
+            return {
+              src: item.url,
+              alt: item.title,
+            };
+          }) || []} />
+        </div>
+      )}
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
         <ReportList

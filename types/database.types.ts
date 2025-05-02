@@ -49,6 +49,17 @@ export type Database = {
         };
         Relationships: [];
       };
+      annoucements: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          created_at: string;
+          start_date: string;
+          end_date: string;
+          url: string;
+        }
+      }
       tasks: {
         Row: {
           address: Json | null;
