@@ -5,6 +5,7 @@
 ### Overview!
 
 LaporID Citizen Reporting Web App is an AI based citizen reporting platform that allows users to report incidents with photos based on specific categories. The platform utilizes AI context based filtering to prevent SPAM report, checks report validity and provides tailored response to the users.
+
 ### Features
 
 1. Report an Incident

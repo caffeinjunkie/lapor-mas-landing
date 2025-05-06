@@ -114,7 +114,7 @@ function CheckReportPage() {
         description: t("error-rating-subtitle"),
         color: "danger",
       });
-    }  
+    }
   };
 
   return (

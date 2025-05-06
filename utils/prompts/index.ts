@@ -62,7 +62,7 @@ export function getFunctions() {
           "validationScoreReason",
           "priority",
           "isSpam",
-          "externalIssue"
+          "externalIssue",
         ],
       },
     },
