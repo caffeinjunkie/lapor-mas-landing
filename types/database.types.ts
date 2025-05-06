@@ -53,13 +53,13 @@ export type Database = {
         Row: {
           id: string;
           title: string;
-          description: string;
+          img: string;
           created_at: string;
           start_date: string;
           end_date: string;
           url: string;
-        }
-      }
+        };
+      };
       tasks: {
         Row: {
           address: Json | null;

@@ -160,12 +160,30 @@ function checkContext(value: string) {
   ];
 
   const bullyingPatterns = [
-    'bullying', 'perundungan', 'dibully', 'merundung', 'dikerjai',
-        'dianiaya', 'dizalimi', 'diteror', 'dihina', 'diejek',
-        'dikucilkan', 'disingkirkan', 'diskriminasi', 'diancam',
-        'dintimidasi', 'dipalak', 'ditekan', 'dikeroyok', 'dikata-katai',
-        'diolok-olok', 'dilecehkan verbal',
-        'dihina di media sosial', 'cyberbullying', 'perisakan',
+    "bullying",
+    "perundungan",
+    "dibully",
+    "merundung",
+    "dikerjai",
+    "dianiaya",
+    "dizalimi",
+    "diteror",
+    "dihina",
+    "diejek",
+    "dikucilkan",
+    "disingkirkan",
+    "diskriminasi",
+    "diancam",
+    "dintimidasi",
+    "dipalak",
+    "ditekan",
+    "dikeroyok",
+    "dikata-katai",
+    "diolok-olok",
+    "dilecehkan verbal",
+    "dihina di media sosial",
+    "cyberbullying",
+    "perisakan",
   ];
 
   const mentalDisorderPatterns = [
@@ -240,14 +258,14 @@ export const handleInternalChecking = (title: string, description: string) => {
   const descriptionContext = checkContext(description);
 
   let context;
-  if (titleContext !== 'UNKNOWN' && descriptionContext !== 'UNKNOWN') {
+  if (titleContext !== "UNKNOWN" && descriptionContext !== "UNKNOWN") {
     context = descriptionContext;
-  } else if (titleContext !== 'UNKNOWN') {
+  } else if (titleContext !== "UNKNOWN") {
     context = titleContext;
-  } else if (descriptionContext !== 'UNKNOWN') {
+  } else if (descriptionContext !== "UNKNOWN") {
     context = descriptionContext;
   } else {
-    context = 'UNKNOWN';
+    context = "UNKNOWN";
   }
 
   return context;

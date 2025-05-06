@@ -26,7 +26,6 @@ html {
   scrollbar-color: #888 #f1f1f1;
 }
 
-
 .animated #logo-l {
   stroke-dasharray: 87;
   stroke-dashoffset: 87;
@@ -85,7 +84,6 @@ html {
   stroke-dashoffset: 187;
   animation: line-anim 4s ease forwards 1.6s;
 }
-
 
 @keyframes bounce {
   0% {

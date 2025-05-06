@@ -19,8 +19,10 @@ import {
   saveTemporaryData,
 } from "./handlers";
 
+import { fetchAnnouncements } from "@/api/announcements";
 import { fetchLocation } from "@/api/location";
 import { fetchTasks } from "@/api/tasks";
+import { Carousel } from "@/components/carousel";
 import { Camera } from "@/components/form/camera";
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
 import { Menu } from "@/components/menu";
@@ -30,11 +32,9 @@ import { ResultModal } from "@/components/modals/result-modal";
 import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import useApi from "@/hooks/use-api";
+import { Announcement } from "@/types/announcement.types";
 import { Report, ReportPayload } from "@/types/report.types";
 import { getUserPrompt } from "@/utils/prompts";
-import { fetchAnnouncements } from "@/api/announcements";
-import Carousel from "@/components/carousel";
-import { Announcement } from "@/types/announcement.types";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -321,16 +321,16 @@ export default function Home() {
               : t("fetch-location-refresh-text")}
         </Button>
       </Skeleton>
-      {!isAnnoucementsLoading && annoucements && !annoucementsError && annoucements.length > 0 && (
-        <div className="w-full flex min-h-48 px-8 py-2">
-          <Carousel images={annoucements?.map((item: Announcement) => {
-            return {
-              src: item.url,
-              alt: item.title,
-            };
-          }) || []} />
-        </div>
-      )}
+      {!isAnnoucementsLoading &&
+        annoucements &&
+        !annoucementsError &&
+        annoucements.length > 0 && (
+          <div className="w-full flex min-h-48 px-8 py-2">
+            <Carousel
+              data={annoucements}
+            />
+          </div>
+        )}
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
         <ReportList

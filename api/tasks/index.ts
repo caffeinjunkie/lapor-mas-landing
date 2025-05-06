@@ -32,7 +32,7 @@ export const createTask = async ({
   images,
 }: CreateTaskType) => {
   const trackingId = await generateSecureCode();
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("tasks")
     .insert({
       title,

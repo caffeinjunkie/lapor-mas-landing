@@ -2,9 +2,7 @@ import * as React from "react";
 
 import { IconSvgProps } from "@/types";
 
-export const Logo: React.FC<
-  IconSvgProps & { animated?: boolean; }
-> = ({
+export const Logo: React.FC<IconSvgProps & { animated?: boolean }> = ({
   width = 152,
   height = 52,
   color = "#FF9F29",
