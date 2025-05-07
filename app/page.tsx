@@ -326,9 +326,7 @@ export default function Home() {
         !annoucementsError &&
         annoucements.length > 0 && (
           <div className="w-full flex min-h-48 px-8 py-2">
-            <Carousel
-              data={annoucements}
-            />
+            <Carousel data={annoucements} />
           </div>
         )}
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
