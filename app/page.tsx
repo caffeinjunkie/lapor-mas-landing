@@ -35,6 +35,7 @@ import useApi from "@/hooks/use-api";
 import { Announcement } from "@/types/announcement.types";
 import { Report, ReportPayload } from "@/types/report.types";
 import { getUserPrompt } from "@/utils/prompts";
+import { getStrictness } from "@/utils/string";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -160,6 +161,7 @@ export default function Home() {
   }, [isMandatoryModalOpen]);
 
   useEffect(() => {
+    const tempData = getTemporaryData();
     if (aiResponse && aiResponse.externalIssue && !aiLoading) {
       setCurrentStep(
         `external-issue-${aiResponse.externalIssue.toLowerCase().replaceAll("_", "-")}`,
@@ -169,11 +171,9 @@ export default function Home() {
     if (aiResponse && !aiResponse.externalIssue && !aiLoading) {
       setCurrentStep("ai-checked");
 
-      const isNonCritical = selectedCategory?.key === "lainnya";
       const isReportValid =
-        (isNonCritical
-          ? (aiResponse?.validityScore ?? 0) >= 70
-          : (aiResponse?.validityScore ?? 0) >= 80) && !aiResponse.isSpam;
+        aiResponse.validityScore >= getStrictness(tempData?.category || "") &&
+        !aiResponse.isSpam;
       if (isReportValid) {
         setTimeout(() => {
           setCurrentStep("follow-up-form");
@@ -377,7 +377,7 @@ export default function Home() {
             onOpenChange={onCheckingModalOpenChange}
             t={t}
             isError={aiError}
-            isNonCriticalType={selectedCategory?.key === "lainnya"}
+            category={selectedCategory?.key || "lainnya"}
             aiResponse={aiResponse}
             isLoading={aiLoading}
             currentStep={currentStep}

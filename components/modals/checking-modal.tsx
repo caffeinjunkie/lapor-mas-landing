@@ -4,13 +4,14 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 import { FollowUpForm } from "../form/follow-up-form";
 import { InvalidReportIcon, SpamIcon, ValidReportIcon } from "../icons";
+import { getStrictness } from "@/utils/string";
 
 interface CheckingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenChange: (isOpen: boolean) => void;
   t: (key: string, options?: { [key: string]: string }) => string;
-  isNonCriticalType: boolean;
+  category: string;
   aiResponse: AIResponseType;
   isLoading: boolean;
   currentStep: string;
@@ -25,7 +26,7 @@ export const CheckingModal = ({
   onClose,
   onOpenChange,
   t,
-  isNonCriticalType,
+  category,
   aiResponse,
   isLoading,
   isSubmitLoading,
@@ -34,9 +35,8 @@ export const CheckingModal = ({
   onBack,
   onSubmit,
 }: CheckingModalProps) => {
-  const isReportValid = isNonCriticalType
-    ? (aiResponse?.validityScore ?? 0) >= 70
-    : (aiResponse?.validityScore ?? 0) >= 80;
+  const isReportValid =
+    aiResponse?.validityScore >= getStrictness(category || "");
 
   const name = currentStep.includes("external-issue")
     ? "external-issue"
