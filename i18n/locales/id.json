@@ -93,13 +93,16 @@
     "error-rating-subtitle": "Terjadi kesalahan saat memberikan penilaian.",
     "success-rating-title": "Sukses Memberikan Penilaian",
     "success-rating-subtitle": "Terima kasih telah memberikan penilaian.",
-    "check-report-input-text": "Tracking ID"
+    "check-report-input-text": "Tracking ID",
+    "error-refresh-title": "Terjadi Kesalahan",
+    "error-refresh-subtitle": "Terjadi kesalahan saat memuat ulang laporan.",
+    "refresh-text": "Muat Ulang"
   },
   "Navbar": {
     "check-report-text": "Cek laporan mu disini!"
   },
   "UploadForm": {
-    "file-upload": "Unggah Dokumen",
+    "file-upload": "Unggah Foto",
     "camera-upload": "Ambil Foto",
     "file-size-error-message": "Ukuran file terlalu besar. Pastikan ukuran file kurang dari 1MB.",
     "upload-form-subtitle": "Anda dapat mengunggah maksimal 3 foto",

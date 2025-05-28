@@ -77,6 +77,10 @@ function CheckReportPage() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const dataFromEntries = Object.fromEntries(new FormData(e.currentTarget));
+    if (report && trackingId === dataFromEntries["tracking-id"]) {
+      mutate();
+      return;
+    }
     const param = appendParams({
       trackingId: dataFromEntries["tracking-id"] as string,
     });
@@ -164,7 +168,7 @@ function CheckReportPage() {
                   </Button>
                 </div>
               )}
-            {report && (
+            {report && !isReportLoading && (
               <div className={clsx("flex flex-col gap-8 w-full")}>
                 <ReportDetail report={report as Report} />
                 <div
