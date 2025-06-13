@@ -30,7 +30,7 @@ export const Navbar = () => {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink
-            className="flex justify-start items-center"
+            className="flex justify-start items-center gap-2"
             href="/"
             onClick={() => setNavbarOpen(false)}
           >
@@ -40,7 +40,7 @@ export const Navbar = () => {
               className="object-contain"
               alt="Logo"
             />
-            <Logo width={120} animated />
+            <Logo width={100} animated />
           </NextLink>
         </NavbarBrand>
         <NavbarItem>
