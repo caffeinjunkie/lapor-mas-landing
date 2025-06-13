@@ -357,7 +357,6 @@ export default function Home() {
             onOpenChange={onCheckingModalOpenChange}
             t={t}
             isError={aiError}
-            category={selectedCategory?.key || "lainnya"}
             aiResponse={aiResponse}
             isLoading={aiLoading}
             currentStep={currentStep}
