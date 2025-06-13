@@ -54,19 +54,6 @@ export const createTask = async ({
   return trackingId;
 };
 
-export const fetchTasks = async () => {
-  const { data, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .range(0, 5)
-    .order("created_at", { ascending: false })
-    .eq("status", "PENDING");
-
-  if (error) throw error;
-
-  return data;
-};
-
 export const fetchTaskByTrackingId = async (trackingId: string) => {
   const { data, error } = await supabase
     .from("tasks")

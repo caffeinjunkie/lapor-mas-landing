@@ -14,6 +14,7 @@ import React from "react";
 
 import { Logo } from "@/components/icons";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { Image } from "@heroui/image";
 
 export const Navbar = () => {
   const t = useTranslations("Navbar");
@@ -29,10 +30,16 @@ export const Navbar = () => {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink
-            className="flex justify-start items-center gap-1"
+            className="flex justify-start items-center"
             href="/"
             onClick={() => setNavbarOpen(false)}
           >
+            <Image
+              src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/app-assets/kabmimika.png`}
+              height={40}
+              className="object-contain"
+              alt="Logo"
+            />
             <Logo width={120} animated />
           </NextLink>
         </NavbarBrand>

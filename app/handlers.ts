@@ -276,7 +276,6 @@ export const handleCreateTask = async (
   followUpQuestions: QuestionAnswer[],
   files: File[],
   setTrackingId: (trackingId: string) => void,
-  mutateReports: KeyedMutator<Report[]>,
   openResultModal: () => void,
   closeModal: () => void,
   setIsSubmitLoading: (isLoading: boolean) => void,
@@ -302,7 +301,6 @@ export const handleCreateTask = async (
       images: imgUrls,
     })) as string;
     setTrackingId(response);
-    await mutateReports();
   } catch (error) {
     console.error(error);
   } finally {

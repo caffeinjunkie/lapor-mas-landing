@@ -46,7 +46,8 @@
     "ai-checker-valid-text": "Laporan valid, tunggu beberapa saat lagi.",
     "create-report-back-text": "Kembali",
     "fetch-report-error-text": "Terjadi kesalahan saat memuat daftar laporan.",
-    "open-ai-error-text": "Terjadi kesalahan teknis. Mohon coba sesaat lagi."
+    "open-ai-error-text": "Terjadi kesalahan teknis. Mohon coba sesaat lagi.",
+    "presented-by-text": "Dipersembahkan oleh:"
   },
   "CheckReportPage": {
     "tracking-id-input-text": "Masukkan Tracking ID",

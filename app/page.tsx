@@ -3,7 +3,6 @@
 import { Button } from "@heroui/button";
 import { useDisclosure } from "@heroui/modal";
 import { Skeleton } from "@heroui/skeleton";
-import { Spinner } from "@heroui/spinner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -21,7 +20,6 @@ import {
 
 import { fetchAnnouncements } from "@/api/announcements";
 import { fetchLocation } from "@/api/location";
-import { fetchTasks } from "@/api/tasks";
 import { Carousel } from "@/components/carousel";
 import { Camera } from "@/components/form/camera";
 import { CameraIcon, MapIcon, RefreshIcon } from "@/components/icons";
@@ -29,13 +27,14 @@ import { Menu } from "@/components/menu";
 import { CheckingModal } from "@/components/modals/checking-modal";
 import { MandatoryModal } from "@/components/modals/mandatory-modal";
 import { ResultModal } from "@/components/modals/result-modal";
-import { ReportList } from "@/components/report";
 import { Category } from "@/config/complaint-category";
 import useApi from "@/hooks/use-api";
 import { Announcement } from "@/types/announcement.types";
 import { Report, ReportPayload } from "@/types/report.types";
 import { getUserPrompt } from "@/utils/prompts";
 import { getStrictness } from "@/utils/string";
+import { Image } from "@heroui/image";
+import { Avatar } from "@heroui/avatar";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -85,17 +84,6 @@ export default function Home() {
     error: annoucementsError,
     isValidating: isAnnoucementsLoading,
   } = useSWR<Announcement[]>(["annoucements"], fetchAnnouncements as any, {
-    dedupingInterval: 60000,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
-
-  const {
-    data: publicReports,
-    error: dataError,
-    isValidating: isReportsLoading,
-    mutate: mutateReports,
-  } = useSWR<Report[]>(["reports"], fetchTasks as any, {
     dedupingInterval: 60000,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
@@ -163,6 +151,7 @@ export default function Home() {
   useEffect(() => {
     const tempData = getTemporaryData();
     if (aiResponse && aiResponse.externalIssue && !aiLoading) {
+      console.log(aiResponse);
       setCurrentStep(
         `external-issue-${aiResponse.externalIssue.toLowerCase().replaceAll("_", "-")}`,
       );
@@ -225,7 +214,6 @@ export default function Home() {
       followUpQuestions,
       files,
       setTrackingId,
-      mutateReports,
       onResultModalOpen,
       onCheckingModalClose,
       setIsSubmitLoading,
@@ -331,21 +319,13 @@ export default function Home() {
         )}
       <div className="flex flex-col items-center justify-center gap-4 px-6 py-2 md:py-10">
         <Menu onMenuPress={selectMenu} />
-        <ReportList
-          title={t("newest-reports-text")}
-          isEmpty={isReportsLoading || publicReports?.length === 0}
-          isError={dataError}
-        >
-          {isReportsLoading && <Spinner />}
-          {!isReportsLoading && publicReports?.length === 0 && (
-            <ReportList.Empty value={t("empty-text")} />
-          )}
-          {!isReportsLoading &&
-            publicReports &&
-            publicReports.map((item: Report, index: number) => (
-              <ReportList.Item key={index} item={item} />
-            ))}
-        </ReportList>
+        <div className="flex flex-col justify-between items-center gap-8 pt-12">
+          <p className="text-center text-sm font-semibold">{t("presented-by-text")}</p>
+          <div className="flex flex-row justify-center items-center gap-8">
+          <Avatar isBordered className="size-32" color="default" src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/app-assets//1.JPG`} />
+          <Avatar isBordered className="size-32" color="default" src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/app-assets//2.JPG`} />
+          </div>
+        </div>
         <div className="flex gap-3">
           <MandatoryModal
             isOpen={isMandatoryModalOpen}
