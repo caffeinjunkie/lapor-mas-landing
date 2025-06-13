@@ -5,13 +5,13 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { FollowUpForm } from "../form/follow-up-form";
 import { InvalidReportIcon, SpamIcon, ValidReportIcon } from "../icons";
 import { getStrictness } from "@/utils/string";
+import { getTemporaryData } from "@/app/handlers";
 
 interface CheckingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenChange: (isOpen: boolean) => void;
   t: (key: string, options?: { [key: string]: string }) => string;
-  category: string;
   aiResponse: AIResponseType;
   isLoading: boolean;
   currentStep: string;
@@ -26,7 +26,6 @@ export const CheckingModal = ({
   onClose,
   onOpenChange,
   t,
-  category,
   aiResponse,
   isLoading,
   isSubmitLoading,
@@ -35,8 +34,9 @@ export const CheckingModal = ({
   onBack,
   onSubmit,
 }: CheckingModalProps) => {
+  const tempData = getTemporaryData();
   const isReportValid =
-    aiResponse?.validityScore >= getStrictness(category || "");
+    aiResponse?.validityScore >= getStrictness(tempData?.category || "");
 
   const name = currentStep.includes("external-issue")
     ? "external-issue"
@@ -47,7 +47,7 @@ export const CheckingModal = ({
       ? t("ai-checker-spam-text")
       : isReportValid && !aiResponse?.isSpam
         ? t("ai-checker-valid-text")
-        : aiResponse?.validationScoreReason;
+        : aiResponse?.validationScoreReason
 
   return (
     <Modal
@@ -103,14 +103,14 @@ export const CheckingModal = ({
               {currentStep === "ai-checked" && !isLoading && aiResponse && (
                 <div className="flex flex-col w-full items-center gap-4">
                   {aiResponse.isSpam && <SpamIcon size={56} />}
-                  {!isReportValid && !aiResponse.isSpam && (
+                  {!isReportValid && (
                     <InvalidReportIcon size={56} />
                   )}
-                  {isReportValid && !aiResponse.isSpam && (
+                  {isReportValid && (
                     <ValidReportIcon size={56} />
                   )}
                   <p className="font-semibold text-sm text-center">{message}</p>
-                  {(!isReportValid || aiResponse.isSpam) && (
+                  {!(isReportValid && !aiResponse.isSpam) && (
                     <Button
                       color="default"
                       variant="light"
