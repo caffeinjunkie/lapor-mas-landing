@@ -1,6 +1,6 @@
 {
   "HomePage": {
-    "title": "Lapor Mas Wapres",
+    "title": "Mimika Center",
     "fetch-location-refresh-text": "Muat ulang lokasi",
     "failed-to-fetch-location": "Gagal memuat lokasi. Mohon coba sesaat lagi.",
     "newest-reports-text": "Laporan Terbaru",
@@ -29,8 +29,8 @@
     "complaint-modal-ai-checking-subtitle": "Laporan anda sedang diperiksa oleh AI",
     "complaint-modal-ai-checked-title": "Hasil Pengecekan",
     "complaint-modal-follow-up-form-title": "Isi Informasi Lanjutan",
-    "complaint-modal-external-issue-title": "Laporan Diluar Cakupan LaporID",
-    "complaint-modal-external-issue-subtitle": "Mohon Maaf, laporan untuk saat ini berada diluar cakupan LaporID. {extra}",
+    "complaint-modal-external-issue-title": "Laporan Diluar Cakupan Mimika Center",
+    "complaint-modal-external-issue-subtitle": "Mohon Maaf, laporan untuk saat ini berada diluar cakupan Mimika Center. {extra}",
     "external-issue-sexual-abuse-text": "Mohon laporkan kasus Anda ke unit Kepolisian atau Unit PPA terdekat, Anda juga bisa melaporkan kasus Anda ke Komnas Perempuan.",
     "external-issue-kdrt-text": "Mohon laporkan kasus Anda ke pihak Kepolisian, Dinas Sosial atau UPTD PPA.",
     "external-issue-legal-dispute-text": "Mohon laporkan kasus Anda ke Pengadilan Negeri atau konsultasikan dengan pengacara atau Lembaga Bantuan Hukum.",

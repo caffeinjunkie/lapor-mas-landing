@@ -53,7 +53,7 @@ export default async function RootLayout({
     <html suppressHydrationWarning lang={locale}>
       <head>
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>LaporID</title>
+        <title>{siteConfig.name}</title>
       </head>
       <body
         className={clsx(

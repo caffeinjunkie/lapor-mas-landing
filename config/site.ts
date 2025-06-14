@@ -1,4 +1,4 @@
 export const siteConfig = {
-  name: "LaporID",
+  name: "Mimika Center",
   description: "Laporkan keluhanmu dengan mudah.",
 };
