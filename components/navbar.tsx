@@ -37,7 +37,7 @@ export const Navbar = () => {
             <Image
               src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/app-assets/kabmimika.png`}
               height={40}
-              className="object-contain"
+              className="object-contain rounded-none"
               alt="Logo"
             />
             <Logo width={100} animated />
