@@ -7,6 +7,7 @@ import { useTranslations } from "use-intl";
 import { CameraIcon, FileIcon } from "../icons";
 
 import { checkError, compressImage } from "@/utils/image";
+import { addToast } from "@heroui/toast";
 
 export const UploadForm = ({
   onNext,
@@ -41,6 +42,11 @@ export const UploadForm = ({
 
     if (checkError([...files, file])) {
       setFileError(t("file-size-error-message"));
+      addToast({
+        title: t("file-size-error-title"),
+        description: t("file-size-error-message"),
+        color: "danger",
+      });
       return;
     }
     setFiles([...files, file]);

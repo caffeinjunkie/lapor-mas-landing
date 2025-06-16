@@ -104,6 +104,7 @@
   "UploadForm": {
     "file-upload": "Unggah Foto",
     "camera-upload": "Ambil Foto",
+    "file-size-error-title": "Ukuran file terlalu besar",
     "file-size-error-message": "Ukuran file terlalu besar. Pastikan ukuran file kurang dari 1MB.",
     "upload-form-subtitle": "Anda dapat mengunggah maksimal 3 foto",
     "continue-text": "Lanjut",
