@@ -35,6 +35,18 @@ export const UploadForm = ({
 
     const fileName = selectedFiles[0].name;
 
+    const fileExtension = selectedFiles[0].type.toLowerCase().split("/")[1];
+
+    if (!['jpg', 'jpeg', 'png'].includes(fileExtension)) {
+      setFileError(t("wrong-type-error-message"));
+      addToast({
+        title: t("wrong-type-error-title"),
+        description: t("wrong-type-error-message"),
+        color: "danger",
+      });
+      return;
+    }
+
     const compressedFile = await compressImage(selectedFiles[0], 1000);
     const file = new File([compressedFile as Blob], fileName, {
       type: "image/jpeg",
