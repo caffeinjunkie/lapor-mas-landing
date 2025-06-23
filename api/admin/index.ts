@@ -1,6 +1,7 @@
-import supabase from "@/utils/supabase-db";
+import { getSupabaseServer } from "@/utils/supabase-db";
 
 export const fetchAllAdmins = async () => {
+  const supabase = await getSupabaseServer();
   const { data, error, count } = await supabase
     .from("admins")
     .select("*", { count: "exact" })
