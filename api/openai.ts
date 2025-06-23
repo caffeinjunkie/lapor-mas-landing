@@ -2,15 +2,10 @@ import { OpenAI } from "openai";
 
 import { getFunctions, getSystemPrompt } from "@/utils/prompts";
 
-export const getOpenAIServerClient = () => {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is not set");
-  }
-  
-  return new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-  });
-};
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
 
 export default async function openai(payload: any) {
   const userMessage = payload || "";
@@ -20,7 +15,7 @@ export default async function openai(payload: any) {
     const functions = getFunctions();
     const messages = [systemMessage, userMessage];
 
-    const response = await getOpenAIServerClient().chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,
       functions: functions,

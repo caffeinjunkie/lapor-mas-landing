@@ -1,6 +1,6 @@
 import { QuestionAnswer, Report } from "@/types/report.types";
 import { generateSecureCode } from "@/utils/crypto";
-import { getSupabaseServer } from "@/utils/supabase-db";
+import supabase from "@/utils/supabase-db";
 
 export type SortType = {
   field: "created_at" | "title" | "priority";
@@ -32,7 +32,6 @@ export const createTask = async ({
   images,
 }: CreateTaskType) => {
   const trackingId = await generateSecureCode();
-  const supabase = await getSupabaseServer();
   const { error } = await supabase
     .from("tasks")
     .insert({
@@ -56,7 +55,6 @@ export const createTask = async ({
 };
 
 export const fetchTasks = async () => {
-  const supabase = await getSupabaseServer();
   const { data, error } = await supabase
     .from("tasks")
     .select("*")
@@ -70,7 +68,6 @@ export const fetchTasks = async () => {
 };
 
 export const fetchTaskByTrackingId = async (trackingId: string) => {
-  const supabase = await getSupabaseServer();
   const { data, error } = await supabase
     .from("tasks")
     .select("*")
@@ -86,7 +83,6 @@ export const updateTaskByTrackingId = async (
   trackingId: string,
   data: Record<string, unknown>,
 ) => {
-  const supabase = await getSupabaseServer();
   const { data: updatedData, error } = await supabase
     .from("tasks")
     .update(data)
