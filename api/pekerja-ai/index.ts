@@ -1,38 +1,22 @@
 export const uploadImageToServer = async (file: File) => {
-  const formData = new FormData();
-  formData.append("image", file);
-
-  const options = {
-    method: "POST",
-    headers: {
-      "x-auth-token": process.env.PEKERJA_AI_IMG_UPLOAD_KEY,
-      Accept: "application/json",
-    },
-    body: formData,
-  } as RequestInit;
-
   try {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_PEKERJA_AI_IMG_UPLOAD_URL as string,
-      options,
-    );
-    if (!response.ok) {
-      // Try to get error details from the response body for better debugging
-      let errorData;
-      try {
-        errorData = await response.json();
-      } catch (jsonError) {
-        // If the body isn't JSON or is empty
-        errorData = { message: response.statusText };
-      }
-      throw new Error(
-        `HTTP error! Status: ${response.status} - ${errorData.message || "Unknown server error"}`,
-      );
-    }
-    const data = await response.json();
+    const formData = new FormData()
+    formData.append('image', file)
 
-    return data;
+    const response = await fetch('/api/pekerja-ai/upload', {
+      method: 'POST',
+      body: formData,
+      // Don't set Content-Type header - the browser will set it automatically with the correct boundary
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || errorData.details || 'Upload failed')
+    }
+
+    return await response.json()
   } catch (error: any) {
-    throw new Error(`Upload failed: ${error.message}`);
+    console.error('Upload error:', error)
+    throw new Error(error.message || 'Failed to upload image')
   }
-};
+}
