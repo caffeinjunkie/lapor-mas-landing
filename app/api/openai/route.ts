@@ -4,7 +4,6 @@ import { getFunctions, getSystemPrompt } from "@/utils/prompts";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true
 });
 
 export async function POST(req: Request) {
