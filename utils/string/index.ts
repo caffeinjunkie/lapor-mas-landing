@@ -31,7 +31,7 @@ const getCategory = (category: string) => {
 const getStrictness = (category: string) => {
   switch (category) {
     case "kebijakan-publik":
-      return 51;
+      return 50;
     case "kondisi-jalan":
       return 80;
     case "fasilitas-umum":
@@ -43,7 +43,7 @@ const getStrictness = (category: string) => {
     case "keamanan":
       return 80;
     case "pungli":
-      return 51;
+      return 50;
     case "lainnya":
       return 20;
     default:
