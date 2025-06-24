@@ -7,6 +7,10 @@ const client = new OpenAI({
 });
 
 export async function POST(req: Request) {
+  const headers = new Headers();
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'POST');
+  
   try {
     const payload = await req.json();
     const userMessage = payload || "";
