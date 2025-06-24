@@ -1,23 +1,41 @@
-export async function openai(payload: any) {
+import { OpenAI } from "openai";
+
+import { getFunctions, getSystemPrompt } from "@/utils/prompts";
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
+
+export default async function openai(payload: any) {
+  const userMessage = payload || "";
+
   try {
-    const response = await fetch('/api/openai', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
+    const systemMessage = getSystemPrompt();
+    const functions = getFunctions();
+    const messages = [systemMessage, userMessage];
+
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: messages,
+      functions: functions,
+      max_tokens: 250,
+      top_p: 0,
+      temperature: 1,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'API request failed');
-    }
+    const resultContent = response.choices[0].message.function_call?.arguments;
 
-    const data = await response.json();
-    return data.result;
-    
+    return resultContent;
   } catch (error) {
-    console.error('Error calling OpenAI API:', error);
+    if (error as any) {
+      console.error(
+        (error as any).response.status,
+        (error as any).response.data,
+      );
+    } else {
+      console.error(`Error with OpenAI API request: ${(error as any).message}`);
+    }
     throw error;
   }
 }
