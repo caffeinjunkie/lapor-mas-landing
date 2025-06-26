@@ -31,65 +31,44 @@ export const createTask = async ({
   address,
   images,
 }: CreateTaskType) => {
-  const trackingId = await generateSecureCode();
-  const { error } = await supabase
-    .from("tasks")
-    .insert({
+  const response = await fetch('/api/tasks', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
       title,
       description,
       category,
+      followUpQuestions,
       priority,
       address,
-      status: "PENDING",
-      tracking_id: trackingId,
       images,
-      data: {
-        follow_up_questions: followUpQuestions,
-      },
-    })
-    .single();
-
-  if (error) throw error;
-
-  return trackingId;
+    }),
+  });
+  return await response.json();
 };
 
 export const fetchTasks = async () => {
-  const { data, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .range(0, 5)
-    .order("created_at", { ascending: false })
-    .eq("status", "PENDING");
-
-  if (error) throw error;
-
-  return data;
+  const response = await fetch('/api/tasks');
+  return await response.json();
 };
 
 export const fetchTaskByTrackingId = async (trackingId: string) => {
-  const { data, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("tracking_id", trackingId)
-    .single();
-
-  if (error) throw error;
-
-  return data;
+  const response = await fetch(`/api/tasks?trackingId=${trackingId}`);
+  return await response.json();
 };
 
 export const updateTaskByTrackingId = async (
   trackingId: string,
   data: Record<string, unknown>,
 ) => {
-  const { data: updatedData, error } = await supabase
-    .from("tasks")
-    .update(data)
-    .eq("tracking_id", trackingId)
-    .single();
-
-  if (error) throw error;
-
-  return { data: updatedData };
+  const response = await fetch(`/api/tasks?trackingId=${trackingId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  return await response.json();
 };
