@@ -82,12 +82,10 @@ export async function POST(request: Request) {
     }
   }
   
-  export async function PUT(
-    request: Request,
-    { params }: { params: { trackingId: string } }
-  ) {
+  export async function PUT(request: Request) {
     try {
-      const { trackingId } = params;
+      const url = new URL(request.url);
+      const trackingId = url.searchParams.get('trackingId');
       const updateData = await request.json();
       
       const { data, error } = await supabase
