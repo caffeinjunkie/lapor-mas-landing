@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   
       if (error) throw error;
   
-      return NextResponse.json({ trackingId });
+      return NextResponse.json(trackingId);
     } catch (error) {
       console.error('Error creating task:', error);
       return NextResponse.json(
