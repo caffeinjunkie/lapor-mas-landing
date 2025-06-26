@@ -33,8 +33,6 @@ export async function POST(request: Request) {
         .select()
         .single();
   
-      if (error) throw error;
-  
       return NextResponse.json(trackingId);
     } catch (error) {
       console.error('Error creating task:', error);
@@ -50,15 +48,12 @@ export async function POST(request: Request) {
       const url = new URL(request.url);
       const trackingId = url.searchParams.get('trackingId');
       const limit = url.searchParams.get('limit') || '5';
-      
       if (trackingId) {
         const { data, error } = await supabase
           .from('tasks')
           .select('*')
           .eq('tracking_id', trackingId)
           .single();
-    
-        if (error) throw error;
     
         return NextResponse.json(data);
       }
@@ -69,8 +64,6 @@ export async function POST(request: Request) {
         .range(0, parseInt(limit))
         .order('created_at', { ascending: false })
         .eq('status', 'PENDING');
-  
-      if (error) throw error;
   
       return NextResponse.json(data);
     } catch (error) {
@@ -94,8 +87,6 @@ export async function POST(request: Request) {
         .eq('tracking_id', trackingId)
         .select()
         .single();
-  
-      if (error) throw error;
   
       return NextResponse.json({ data });
     } catch (error) {
