@@ -64,6 +64,7 @@ function CheckReportPage() {
       revalidateOnReconnect: false,
     },
   );
+  console.log(reportError, "reportError");
   const { data: admins, isValidating: isAdminsLoading } = useSWR(
     "admins",
     () => fetchAllAdmins() as any,
@@ -97,7 +98,7 @@ function CheckReportPage() {
   };
 
   const reportImages: { src: string; key: string }[] =
-    report?.images.map((src: string, index: number) => ({
+    report?.images?.map((src: string, index: number) => ({
       src,
       key: `image-${index + 1}`,
     })) || [];
