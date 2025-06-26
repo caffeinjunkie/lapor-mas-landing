@@ -10,6 +10,7 @@ export async function POST(req: Request) {
   const headers = new Headers();
   headers.set('Access-Control-Allow-Origin', '*');
   headers.set('Access-Control-Allow-Methods', 'POST');
+  headers.set('Content-Type', 'application/json');
   
   try {
     const payload = await req.json();
@@ -28,10 +29,7 @@ export async function POST(req: Request) {
       temperature: 1,
     });
 
-    console.log(response);
-
     const resultContent = response.choices[0].message.function_call?.arguments;
-    console.log(resultContent);
 
     return NextResponse.json({ result: resultContent });
     
