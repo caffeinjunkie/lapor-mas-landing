@@ -1,6 +1,6 @@
 export async function openai(payload: any) {
   try {
-    const response = await fetch('/api/openai', {
+    const response = await fetch('/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
