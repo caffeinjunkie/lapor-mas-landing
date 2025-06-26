@@ -64,7 +64,6 @@ function CheckReportPage() {
       revalidateOnReconnect: false,
     },
   );
-  console.log(reportError, "reportError");
   const { data: admins, isValidating: isAdminsLoading } = useSWR(
     "admins",
     () => fetchAllAdmins() as any,
