@@ -1,13 +1,13 @@
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
+import { addToast } from "@heroui/toast";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useTranslations } from "use-intl";
 
 import { CameraIcon, FileIcon } from "../icons";
 
 import { checkError, compressImage } from "@/utils/image";
-import { addToast } from "@heroui/toast";
 
 export const UploadForm = ({
   onNext,
@@ -37,7 +37,7 @@ export const UploadForm = ({
 
     const fileExtension = selectedFiles[0].type.toLowerCase().split("/")[1];
 
-    if (!['jpg', 'jpeg', 'png'].includes(fileExtension)) {
+    if (!["jpg", "jpeg", "png"].includes(fileExtension)) {
       setFileError(t("wrong-type-error-message"));
       addToast({
         title: t("wrong-type-error-title"),

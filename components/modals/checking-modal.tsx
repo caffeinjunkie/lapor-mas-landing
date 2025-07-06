@@ -4,8 +4,9 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 import { FollowUpForm } from "../form/follow-up-form";
 import { InvalidReportIcon, SpamIcon, ValidReportIcon } from "../icons";
-import { getStrictness } from "@/utils/string";
+
 import { getTemporaryData } from "@/app/handlers";
+import { getStrictness } from "@/utils/string";
 
 interface CheckingModalProps {
   isOpen: boolean;
@@ -47,7 +48,7 @@ export const CheckingModal = ({
       ? t("ai-checker-spam-text")
       : isReportValid && !aiResponse?.isSpam
         ? t("ai-checker-valid-text")
-        : aiResponse?.validationScoreReason
+        : aiResponse?.validationScoreReason;
 
   return (
     <Modal
@@ -103,12 +104,8 @@ export const CheckingModal = ({
               {currentStep === "ai-checked" && !isLoading && aiResponse && (
                 <div className="flex flex-col w-full items-center gap-4">
                   {aiResponse.isSpam && <SpamIcon size={56} />}
-                  {!isReportValid && (
-                    <InvalidReportIcon size={56} />
-                  )}
-                  {isReportValid && (
-                    <ValidReportIcon size={56} />
-                  )}
+                  {!isReportValid && <InvalidReportIcon size={56} />}
+                  {isReportValid && <ValidReportIcon size={56} />}
                   <p className="font-semibold text-sm text-center">{message}</p>
                   {!(isReportValid && !aiResponse.isSpam) && (
                     <Button

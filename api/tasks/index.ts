@@ -31,10 +31,10 @@ export const createTask = async ({
   address,
   images,
 }: CreateTaskType) => {
-  const response = await fetch('/api/tasks', {
-    method: 'POST',
+  const response = await fetch("/api/tasks", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       title,
@@ -50,7 +50,7 @@ export const createTask = async ({
 };
 
 export const fetchTasks = async () => {
-  const response = await fetch('/api/tasks');
+  const response = await fetch("/api/tasks");
   return await response.json();
 };
 
@@ -64,9 +64,9 @@ export const updateTaskByTrackingId = async (
   data: Record<string, unknown>,
 ) => {
   const response = await fetch(`/api/tasks?trackingId=${trackingId}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });

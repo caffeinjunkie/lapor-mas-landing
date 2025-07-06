@@ -1,5 +1,6 @@
+import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
-import { NextResponse } from 'next/server';
+
 import { getFunctions, getSystemPrompt } from "@/utils/prompts";
 
 const client = new OpenAI({
@@ -8,10 +9,10 @@ const client = new OpenAI({
 
 export async function POST(req: Request) {
   const headers = new Headers();
-  headers.set('Access-Control-Allow-Origin', '*');
-  headers.set('Access-Control-Allow-Methods', 'POST');
-  headers.set('Content-Type', 'application/json');
-  
+  headers.set("Access-Control-Allow-Origin", "*");
+  headers.set("Access-Control-Allow-Methods", "POST");
+  headers.set("Content-Type", "application/json");
+
   try {
     const payload = await req.json();
     const userMessage = payload || "";
@@ -32,23 +33,22 @@ export async function POST(req: Request) {
     const resultContent = response.choices[0].message.function_call?.arguments;
 
     return NextResponse.json({ result: resultContent });
-    
   } catch (error: any) {
-    console.error('OpenAI API error:', error);
-    
+    console.error("OpenAI API error:", error);
+
     if (error.response) {
       return NextResponse.json(
-        { 
-          error: 'OpenAI API error',
+        {
+          error: "OpenAI API error",
           status: error.response.status,
-          data: error.response.data 
+          data: error.response.data,
         },
-        { status: error.response.status }
+        { status: error.response.status },
       );
     } else {
       return NextResponse.json(
-        { error: error.message || 'Internal server error' },
-        { status: 500 }
+        { error: error.message || "Internal server error" },
+        { status: 500 },
       );
     }
   }
